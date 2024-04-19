@@ -1,119 +1,150 @@
-﻿using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CollegeAdmissionAutomation
 {
-    public class MySqlDB
+    public partial class MainWindow : Window
     {
-        MySqlConnection mySqlConnection;
-
-        private MySqlDB()
+        public MainWindowViewModel ViewModel { get; set; }
+        public MainWindow()
         {
-            MySqlConnectionStringBuilder stringBuilder = new();
-            stringBuilder.UserID = "student";
-            stringBuilder.Password = "student";
-            stringBuilder.Database = "drinks_1125";
-            stringBuilder.Server = "192.168.200.13";
-            stringBuilder.CharacterSet = "utf8mb4";
-            //MySqlConnection = new MySqlConnection("server=192.168.200.13;user=student;password=student;database=drinks_1125;Character Set=utf8mb4");
-            mySqlConnection = new MySqlConnection(stringBuilder.ToString());
-            OpenConnection();
+            InitializeComponent();
+            ViewModel = new MainWindowViewModel();
+            DataContext = ViewModel;
+            
         }
 
-        private bool OpenConnection()
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            string searchTerm = searchTextBox.Text.Trim();
+            if (ViewModel != null)
             {
-                mySqlConnection.Open();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
+                ViewModel.SearchApplicants(searchTerm);
             }
         }
+      
 
-        public void CloseConnection()
+        public class Applicant : INotifyPropertyChanged
         {
-            try
-            {
-                mySqlConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+            private string _applicantID;
+            private string _name;
+            private decimal _gpa;
 
-        internal MySqlConnection GetConnection()
-        {
-            if (mySqlConnection.State != System.Data.ConnectionState.Open)
-                if (!OpenConnection())
-                    return null;
-
-            return mySqlConnection;
-        }
-
-        static MySqlDB instance;
-        public static MySqlDB Instance
-        {
-            get
+            public string ApplicantID
             {
-                if (instance == null)
-                    instance = new MySqlDB();
-                return instance;
-            }
-        }
-
-        public int GetAutoID(string table)
-        {
-            try
-            {
-                string sql = "SHOW TABLE STATUS WHERE `Name` = '" + table + "'";
-                using (var mc = new MySqlCommand(sql, mySqlConnection))
-                using (var reader = mc.ExecuteReader())
+                get => _applicantID;
+                set
                 {
-                    if (reader.Read())
-                        return reader.GetInt32("Auto_increment");
+                    _applicantID = value;
+                    OnPropertyChanged();
                 }
-                return -1;
             }
-            catch (Exception ex)
+
+            public string Name
             {
-                MessageBox.Show(ex.Message);
-                return -1;
+                get => _name;
+                set
+                {
+                    _name = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public decimal GPA
+            {
+                get => _gpa;
+                set
+                {
+                    _gpa = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
-        //public void Test()
-        //{
-        //    try
-        //    { 
-        //        // безопасное выполнение кода, 
-        //        // если произойдет ошибка, она будет перехвачена и выполнится блок catch
-        //        mySqlConnection.Open();
-        //        string str = "С'ироп";
-        //        string sql = "INSERT INTO TagsTable VALUES (0, @tag)";
-        //        using (MySqlCommand cmd = new MySqlCommand(sql, mySqlConnection))
-        //        {
-        //            cmd.Parameters.Add(new MySqlParameter("tag", str));
-        //            cmd.ExecuteNonQuery();
-        //        }
+        public class MainWindowViewModel : INotifyPropertyChanged
+        {
+            private ObservableCollection<Applicant> _applicants;
+            public ObservableCollection<Applicant> Applicants
+            {
+                get => _applicants;
+                set
+                {
+                    _applicants = value;
+                    OnPropertyChanged();
+                }
+            }
 
-        //        mySqlConnection.Close();
-        //    }
-        //    catch (Exception ex) 
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //    }
-        //}
+            public ICommand SearchCommand { get; private set; }
+            public IEnumerable<Applicant> filteredApplicants { get; private set; }
+
+            public MainWindowViewModel()
+            {
+                Applicants = new ObservableCollection<Applicant>
+                {
+                    new Applicant { ApplicantID = "1234567", Name = "John Doe", GPA = 3.8m },
+                    new Applicant { ApplicantID = "2345678", Name = "Jane Smith", GPA = 3.9m },
+                    new Applicant { ApplicantID = "3456789", Name = "Bob Johnson", GPA = 3.5m }
+                };
+
+                SearchCommand = new RelayCommand(param => SearchApplicants(""));
+            }
+
+            public void SearchApplicants(string searchText)
+            {
+                // Filter the applicants based on the search text
+                // ...
+
+                // Set the filtered applicants as the new value for the Applicants property
+                Applicants = new ObservableCollection<Applicant>(filteredApplicants);
+                OnPropertyChanged();
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public class RelayCommand : ICommand
+        {
+            private Action<object> _execute;
+            private Func<object, bool> _canExecute;
+
+            public event EventHandler CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
+
+            public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+            {
+                _execute = execute;
+                _canExecute = canExecute;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return _canExecute == null || _canExecute(parameter);
+            }
+
+            public void Execute(object parameter)
+            {
+                _execute(parameter);
+            }
+        }
     }
 }
 //private void SearchButton_Click(object sender, RoutedEventArgs e)
