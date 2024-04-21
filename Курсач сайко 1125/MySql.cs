@@ -11,6 +11,7 @@ namespace CollegeAdmissionAutomation
 {
     public class MySqlDB
     {
+
         MySqlConnection mySqlConnection;
 
         private MySqlDB()

@@ -1,21 +1,55 @@
-﻿using System;
+﻿using MySqlConnector;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CollegeAdmissionAutomation
 {
     public partial class MainWindow : Window
     {
+        public class ApplicantRepository
+        {
+            public void InsertApplicants(ObservableCollection<Applicant> applicants)
+            {
+                using (MySqlConnection connection = new MySqlConnection("server=192.168.200.13;user=student;password=student;database=drinks_1125"))
+                {
+                    connection.Open();
+
+                    using (MySqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            foreach (Applicant applicant in applicants)
+                            {
+                                MySqlCommand command = new MySqlCommand("INSERT INTO Applicants (ApplicantID, Name, GPA) VALUES (@ApplicantID, @Name, @GPA)", connection);
+                                command.Parameters.AddWithValue("@ApplicantID", applicant.ApplicantID);
+                                command.Parameters.AddWithValue("@Name", applicant.Name);
+                                command.Parameters.AddWithValue("@GPA", applicant.GPA);
+
+                                command.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+        }
         public MainWindowViewModel ViewModel { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             ViewModel = new MainWindowViewModel();
             DataContext = ViewModel;
-            
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -26,102 +60,88 @@ namespace CollegeAdmissionAutomation
                 ViewModel.SearchApplicants(searchTerm);
             }
         }
-      
 
-        public class Applicant : INotifyPropertyChanged
+        private void CancelSearchButton_Click(object sender, RoutedEventArgs e)
         {
-            private string _applicantID;
-            private string _name;
-            private decimal _gpa;
-
-            public string ApplicantID
+            if (ViewModel != null)
             {
-                get => _applicantID;
-                set
-                {
-                    _applicantID = value;
-                    OnPropertyChanged();
-                }
-            }
-
-            public string Name
-            {
-                get => _name;
-                set
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
-            }
-
-            public decimal GPA
-            {
-                get => _gpa;
-                set
-                {
-                    _gpa = value;
-                    OnPropertyChanged();
-                }
-            }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                ViewModel.CancelSearchCommand.Execute(null);
             }
         }
 
-        public class MainWindowViewModel : INotifyPropertyChanged
+        private void applicantsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            private ObservableCollection<Applicant> _applicants;
-            public ObservableCollection<Applicant> Applicants
+            if (applicantsDataGrid.SelectedItem is Applicant applicant)
             {
-                get => _applicants;
-                set
-                {
-                    _applicants = value;
-                    OnPropertyChanged();
-                }
+                MessageBox.Show($"Selected applicant: {applicant.Name} ({applicant.ApplicantID})");
             }
+        }
+    }
 
-            public ICommand SearchCommand { get; private set; }
-            public IEnumerable<Applicant> filteredApplicants { get; private set; }
+    public class Applicant : INotifyPropertyChanged
+    {
+        private string _applicantID;
+        private string _name;
+        private decimal _gpa;
 
-            public MainWindowViewModel()
+        public string ApplicantID
+        {
+            get => _applicantID;
+            set
             {
-                Applicants = new ObservableCollection<Applicant>
-                {
-                    new Applicant { ApplicantID = "1234567", Name = "John Doe", GPA = 3.8m },
-                    new Applicant { ApplicantID = "2345678", Name = "Jane Smith", GPA = 3.9m },
-                    new Applicant { ApplicantID = "3456789", Name = "Bob Johnson", GPA = 3.5m }
-                };
-
-                SearchCommand = new RelayCommand(param => SearchApplicants(""));
-            }
-
-            public void SearchApplicants(string searchText)
-            {
-                // Filter the applicants based on the search text
-                // ...
-
-                // Set the filtered applicants as the new value for the Applicants property
-                Applicants = new ObservableCollection<Applicant>(filteredApplicants);
+                _applicantID = value;
                 OnPropertyChanged();
             }
+        }
 
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public string Name
+        {
+            get => _name;
+            set
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _name = value;
+                OnPropertyChanged();
             }
         }
 
+        public decimal GPA
+        {
+            get => _gpa;
+            set
+            {
+                _gpa = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class MainWindowViewModel : INotifyPropertyChanged
+    {
+        private ObservableCollection<Applicant> _applicants;
+        public ObservableCollection<Applicant> Applicants
+        {
+            get => _applicants;
+            set
+            {
+                _applicants = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand SearchCommand { get; private set; }
+        public ICommand CancelSearchCommand { get; private set; }
+        private ObservableCollection<Applicant> _filteredApplicants;
         public class RelayCommand : ICommand
         {
-            private Action<object> _execute;
-            private Func<object, bool> _canExecute;
+            private readonly Action<object> _execute;
+            private readonly Predicate<object> _canExecute;
 
             public event EventHandler CanExecuteChanged
             {
@@ -129,15 +149,15 @@ namespace CollegeAdmissionAutomation
                 remove { CommandManager.RequerySuggested -= value; }
             }
 
-            public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+            public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
             {
                 _execute = execute;
-                _canExecute = canExecute;
+                _canExecute = canExecute ?? (o => true);
             }
 
             public bool CanExecute(object parameter)
             {
-                return _canExecute == null || _canExecute(parameter);
+                return _canExecute(parameter);
             }
 
             public void Execute(object parameter)
@@ -145,8 +165,50 @@ namespace CollegeAdmissionAutomation
                 _execute(parameter);
             }
         }
+
+        public MainWindowViewModel()
+        {
+            Applicants = new ObservableCollection<Applicant>
+            {
+                new Applicant { ApplicantID = "1234567", Name = "John Doe", GPA = 3.8m },
+                new Applicant { ApplicantID = "2345678", Name = "Jane Smith", GPA = 3.9m },
+                new Applicant { ApplicantID = "3456789", Name = "Bob Johnson", GPA = 3.5m }
+
+            };
+
+            SearchCommand = new RelayCommand(param => SearchApplicants(""));
+            CancelSearchCommand = new RelayCommand(param => CancelSearch());
+
+        }
+
+        public void SearchApplicants(string searchText)
+        {
+            if (searchText == null)
+            {
+                throw new ArgumentNullException(nameof(searchText));
+            }
+
+
+            _filteredApplicants = new ObservableCollection<Applicant>(Applicants.Where(a => a.Name.Contains(searchText)));
+            Applicants = _filteredApplicants;
+        }
+
+        public void CancelSearch()
+        {
+
+            Applicants = new ObservableCollection<Applicant>(Applicants.ToList());
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
+
 }
+
 //private void SearchButton_Click(object sender, RoutedEventArgs e)
 //{
 //    string searchTerm = searchTextBox.Text.Trim();

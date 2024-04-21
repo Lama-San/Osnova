@@ -8,15 +8,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Margin="5">
-            <Label Content="Search:" VerticalAlignment="Center"/>
+            <Label Content="поиск:" VerticalAlignment="Center"/>
             <TextBox x:Name="searchTextBox" Width="200" Margin="5,0" VerticalAlignment="Center"/>
-            <Button x:Name="searchButton" Content="Search" Margin="5,0" VerticalAlignment="Center" Click="SearchButton_Click"/>
+            <Button x:Name="searchButton" Content="Поиск" Margin="5,0" VerticalAlignment="Center" Click="SearchButton_Click"/>
+            <Button Content=" Отменить поиск" Command="{Binding CancelSearchCommand}"/>
         </StackPanel>
-        <DataGrid x:Name="applicantsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5" ItemsSource="{Binding Applicants}">
+        <DataGrid x:Name="applicantsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5" ItemsSource="{Binding Applicants}" SelectionChanged="applicantsDataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ApplicantID}"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="GPA" Binding="{Binding GPA}" Width="Auto"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Средний балл" Binding="{Binding GPA}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
