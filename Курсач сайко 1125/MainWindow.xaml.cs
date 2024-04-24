@@ -11,46 +11,14 @@ namespace CollegeAdmissionAutomation
 {
     public partial class MainWindow : Window
     {
-        public class ApplicantRepository
-        {
-            public void InsertApplicants(ObservableCollection<Applicant> applicants)
-            {
-                using (MySqlConnection connection = new MySqlConnection("server=192.168.200.13;user=student;password=student;database=drinks_1125"))
-                {
-                    connection.Open();
-
-                    using (MySqlTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            foreach (Applicant applicant in applicants)
-                            {
-                                MySqlCommand command = new MySqlCommand("INSERT INTO Applicants (ApplicantID, Name, GPA) VALUES (@ApplicantID, @Name, @GPA)", connection);
-                                command.Parameters.AddWithValue("@ApplicantID", applicant.ApplicantID);
-                                command.Parameters.AddWithValue("@Name", applicant.Name);
-                                command.Parameters.AddWithValue("@GPA", applicant.GPA);
-
-                                command.ExecuteNonQuery();
-                            }
-
-                            transaction.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            throw;
-                        }
-                    }
-                }
-            }
-        }
+       
         public MainWindowViewModel ViewModel { get; set; }
         public MainWindow()
         {
-            InitializeComponent();
             ViewModel = new MainWindowViewModel();
             DataContext = ViewModel;
         }
+
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {

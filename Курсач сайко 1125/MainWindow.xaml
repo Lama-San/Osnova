@@ -4,19 +4,21 @@
         Title="CollegeAdmissionAutomation" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
         <StackPanel Orientation="Horizontal" Margin="5">
-            <Label Content="поиск:" VerticalAlignment="Center"/>
-            <TextBox x:Name="searchTextBox" Width="200" Margin="5,0" VerticalAlignment="Center"/>
-            <Button x:Name="searchButton" Content="Поиск" Margin="5,0" VerticalAlignment="Center" Click="SearchButton_Click"/>
-            <Button Content=" Отменить поиск" Command="{Binding CancelSearchCommand}"/>
+            <Label Content="Поиск по имени" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox x:Name="searchTextBox" Width="200" Margin="0,0,5,0" />
+            <Button x:Name="searchButton" Content="Поиск" Click="SearchButton_Click" Margin="0,0,5,0" />
+            <Button x:Name="cancelSearchButton" Content="Отмена поиска" Click="CancelSearchButton_Click" Margin="0,0,5,0" Width="82" />
         </StackPanel>
-        <DataGrid x:Name="applicantsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5" ItemsSource="{Binding Applicants}" SelectionChanged="applicantsDataGrid_SelectionChanged">
+
+        <DataGrid x:Name="applicantsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="5" SelectionChanged="applicantsDataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding ApplicantID}"/>
-                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="ID Студента" Binding="{Binding ApplicantID}" />
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Средний балл" Binding="{Binding GPA}" />
             </DataGrid.Columns>
         </DataGrid>

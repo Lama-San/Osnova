@@ -1,6 +1,7 @@
 ﻿using MySqlConnector;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,39 @@ namespace CollegeAdmissionAutomation
 {
     public class MySqlDB
     {
+        public class ApplicantRepository
+        {
+            public void InsertApplicants(ObservableCollection<Applicant> applicants)
+            {
+                using (MySqlConnection connection = new MySqlConnection("server=localhost;user=root;password=student;database=dayn1"))
+                {
+                    connection.Open();
 
+                    using (MySqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            foreach (Applicant applicant in applicants)
+                            {
+                                MySqlCommand command = new MySqlCommand("INSERT INTO Applicants (ApplicantID, Name, GPA) VALUES (@ApplicantID, @Name, @GPA)", connection);
+                                command.Parameters.AddWithValue("@ApplicantID", applicant.ApplicantID);
+                                command.Parameters.AddWithValue("@Name", applicant.Name);
+                                command.Parameters.AddWithValue("@GPA", applicant.GPA);
+
+                                command.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+        }
         MySqlConnection mySqlConnection;
 
         private MySqlDB()
