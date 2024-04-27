@@ -15,12 +15,23 @@
             <Button x:Name="cancelSearchButton" Content="Отмена поиска" Click="CancelSearchButton_Click" Margin="0,0,5,0" Width="82" />
         </StackPanel>
 
-        <DataGrid x:Name="applicantsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="5" SelectionChanged="applicantsDataGrid_SelectionChanged">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID Студента" Binding="{Binding ApplicantID}" />
-                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Средний балл" Binding="{Binding GPA}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="applicantsDataGrid" Margin="5" Grid.Column="0" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionChanged="applicantsDataGrid_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID Студента" Binding="{Binding ApplicantID}" />
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Средний балл" Binding="{Binding GPA}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
+                <Button x:Name="btnExit" Content="Выход" Click="btnExit_Click" Width="45" Height="391" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

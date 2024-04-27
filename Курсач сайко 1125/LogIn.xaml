@@ -1,4 +1,4 @@
-﻿<Window x:Class="Курсач_сайко_1125.logIn"
+﻿<Window x:Class="Курсач_сайко_1125.LogIn"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Login Page" SizeToContent="Height" MinHeight="150" Width="300">

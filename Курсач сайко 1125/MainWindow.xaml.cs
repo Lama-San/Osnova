@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Курсач_сайко_1125;
 
 namespace CollegeAdmissionAutomation
 {
@@ -15,10 +16,18 @@ namespace CollegeAdmissionAutomation
         public MainWindowViewModel ViewModel { get; set; }
         public MainWindow()
         {
+            InitializeComponent();
             ViewModel = new MainWindowViewModel();
             DataContext = ViewModel;
+            
         }
-
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            InitializeComponent();
+            LogIn logIn = new LogIn();
+            logIn.Show();
+            this.Close();
+        }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
