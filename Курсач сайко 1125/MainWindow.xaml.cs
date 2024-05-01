@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using MySqlConnector;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,11 +13,12 @@ namespace CollegeAdmissionAutomation
 {
     public partial class MainWindow : Window
     {
-       
+        private readonly Login login;
         public MainWindowViewModel ViewModel { get; set; }
-        public MainWindow()
+        public MainWindow(Login login)
         {
             InitializeComponent();
+            this.login = login;
             ViewModel = new MainWindowViewModel();
             DataContext = ViewModel;
             
@@ -145,13 +147,7 @@ namespace CollegeAdmissionAutomation
 
         public MainWindowViewModel()
         {
-            Applicants = new ObservableCollection<Applicant>
-            {
-                new Applicant { ApplicantID = "1234567", Name = "John Doe", GPA = 3.8m },
-                new Applicant { ApplicantID = "2345678", Name = "Jane Smith", GPA = 3.9m },
-                new Applicant { ApplicantID = "3456789", Name = "Bob Johnson", GPA = 3.5m }
-
-            };
+         
 
             SearchCommand = new RelayCommand(param => SearchApplicants(""));
             CancelSearchCommand = new RelayCommand(param => CancelSearch());

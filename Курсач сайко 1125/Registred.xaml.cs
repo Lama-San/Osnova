@@ -1,56 +1,60 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using CollegeAdmissionAutomation;
+using Kinoteka2._0;
 using Microsoft.Data.SqlClient;
-
+using Microsoft.VisualBasic.ApplicationServices;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 namespace Курсач_сайко_1125
 {
     public partial class Registred : Window
     {
+        private Login login;
+        public string Login { get; set; }
+        public string Email { get; set; }
+        public PasswordBox Password { get; set; }
+        private string errorMessage;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        void Signal([CallerMemberName] string prop = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
         public Registred()
         {
+            //Перевод вводимого текста в данные
             InitializeComponent();
+            DataContext = this;
+            Password = pwbPassword;
+        }
+        public string ErrorMessage
+        {
+            get => errorMessage;
+            set
+            {
+                errorMessage = value;
+                Signal();
+            }
         }
 
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
-            string connectionString = "Data Source=(local);Initial Catalog=UserRegistration;Integrated Security=True";
-            string username = txtUsername.Text;
-            string password = pwbPassword.Password;
-            string confirmPassword = pwbConfirmPassword.Password;
-            string email = txtEmail.Text;
+            string password = Password.Password;
+           
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword) || string.IsNullOrEmpty(email))
+            MessageBox.Show("Регистрация прошла успешно!");
+            login = new Login
             {
-                lblMessage.Text = "Все поля обязательны для заполнения.";
-                return;
-            }
+                FirstName = Login,
+                Password = password,
 
-            if (password != confirmPassword)
-            {
-                lblMessage.Text = "Пароли не совпадают.";
-                return;
-            }
-
-            using (Microsoft.Data.SqlClient.SqlConnection connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "INSERT INTO Users (Username, Password, Email) VALUES (@Username, @Password, @Email)";
-                Microsoft.Data.SqlClient.SqlCommand command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Password", password);
-                command.Parameters.AddWithValue("@Email", email);
-
-                try
-                {
-                    command.ExecuteNonQuery();
-                    lblMessage.Text = "Пользователь успешно зарегистрировался.";
-                }
-                catch (Exception ex)
-                {
-                    lblMessage.Text = "Ошибка при регистрации пользователя: " + ex.Message;
-                }
-            }
+                Email = login.Email,
+               
+            };
+            DB.GetInstance().Logins.Add(login);
+            DB.GetInstance().SaveChanges();
+            this.Close();
+            new MainWindow(login).Show();
         }
     }
 }
