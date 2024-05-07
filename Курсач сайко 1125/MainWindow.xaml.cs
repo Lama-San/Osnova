@@ -156,11 +156,10 @@ namespace CollegeAdmissionAutomation
 
         public void SearchApplicants(string searchText)
         {
-            if (searchText == null)
+            if (string.IsNullOrEmpty(searchText))
             {
-                throw new ArgumentNullException(nameof(searchText));
+                throw new ArgumentException("Search text cannot be null or empty.", nameof(searchText));
             }
-
 
             _filteredApplicants = new ObservableCollection<Applicant>(Applicants.Where(a => a.Name.Contains(searchText)));
             Applicants = _filteredApplicants;

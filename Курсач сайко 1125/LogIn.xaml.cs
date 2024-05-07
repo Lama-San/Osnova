@@ -1,5 +1,5 @@
 ﻿using CollegeAdmissionAutomation;
-using Kinoteka2._0;
+using BD;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.ComponentModel;
@@ -31,10 +31,7 @@ namespace Курсач_сайко_1125
 
         private void CheckAuth(string login, string pass)
         {
-            //Проверка на правильный ввод данных
-
-            //Проверка на правильный ввод данных
-            ErrorMesage = null;
+            //Проверка на правильный ввод данных 
             var user = DB.Instance.Logins.
 
                 FirstOrDefault(s => s.FirstName == login && s.Password == pass);
@@ -43,7 +40,7 @@ namespace Курсач_сайко_1125
                 new MainWindow(user).Show();
                 Close();
             }
-            else if (login == null)
+            else if (login == null || pass == null)
             {
                 ErrorMesage = "Неправильно указан логин или пароль!";
 
@@ -52,12 +49,12 @@ namespace Курсач_сайко_1125
 
         }
 
-        private void LoginButton_Click(object sender, EventArgs e)
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             CheckAuth(Login, passwordBox.Password);
         }
 
-        private void RegisterButton_Click(object sender, EventArgs e)
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             // Create a new instance of the Register window.
             Registred registred = new Registred();

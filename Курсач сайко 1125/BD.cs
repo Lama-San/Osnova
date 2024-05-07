@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Курсач_сайко_1125;
 
-namespace Kinoteka2._0
+namespace BD    
 {
     public class DB
     {
