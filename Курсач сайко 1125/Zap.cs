@@ -11,5 +11,5 @@ public partial class Zap
 
     public decimal Gpa { get; set; }
 
-    public string? Spec { get; set; }
+    public string Spec { get; set; } = null!;
 }

@@ -16,8 +16,6 @@ public partial class Dayn1Context : DbContext
     {
     }
 
-    public virtual DbSet<Abiturient> Abiturients { get; set; }
-
     public virtual DbSet<Login> Logins { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -33,19 +31,6 @@ public partial class Dayn1Context : DbContext
         modelBuilder
             .UseCollation("utf8mb4_general_ci")
             .HasCharSet("utf8mb4");
-
-        modelBuilder.Entity<Abiturient>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("abiturients");
-
-            entity.Property(e => e.Id).HasColumnType("int(11)");
-            entity.Property(e => e.Gpa)
-                .HasPrecision(3, 2)
-                .HasColumnName("GPA");
-            entity.Property(e => e.Name).HasMaxLength(50);
-        });
 
         modelBuilder.Entity<Login>(entity =>
         {
