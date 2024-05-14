@@ -9,7 +9,7 @@ public partial class Zap
 
     public string Name { get; set; } = null!;
 
-    public string Gpa { get; set; } = null!;
+    public decimal Gpa { get; set; }
 
-    public string Spec { get; set; } = null!;
+    public string? Spec { get; set; }
 }

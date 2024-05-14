@@ -13,48 +13,63 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-
 namespace Курсач_сайко_1125
 {
-    /// <summary>
-    /// Логика взаимодействия для Dn_Registred.xaml
-    /// </summary>
     public partial class Dn_Registred : Window
     {
+        private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
+
         public Dn_Registred()
         {
             InitializeComponent();
         }
 
-
-            private readonly string connectionString = "server=localhost;user=root;password=student;database=dayn1";
-               
-       
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtGpa.Text))
             {
-                MessageBox.Show("Please enter a name and car number.");
+                MessageBox.Show("Обязательные поля не заполнены!");
                 return;
             }
+
             string name = txtName.Text;
-            string GPA = txtGpa.Text; string spec = cboSpec.SelectedItem.ToString();
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            decimal gpa;
+            if (!decimal.TryParse(txtGpa.Text, out gpa))
             {
-                connection.Open();
-                string query = "INSERT INTO zap (name, GPA, spec) VALUES (@name, @GPA, @spec)";
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@name", name);
-                    command.Parameters.AddWithValue("@GPA", GPA); command.Parameters.AddWithValue("@spec", spec);
-                    command.ExecuteNonQuery();
-                }
+                MessageBox.Show("Некорректное значение GPA");
+                return;
             }
-            MessageBox.Show($"Регистрация успешна, ждите и варитесь(");
-            Close();
+
+            string spec = cboSpec.SelectedItem?.ToString();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO zap (Name, Gpa, Spec) VALUES (@name, @gpa, @spec)";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@name", name);
+                        command.Parameters.AddWithValue("@gpa", gpa);
+                        command.Parameters.AddWithValue("@spec", spec);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show($"Регистрация успешна, ждите и варитесь(");
+                Close();
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show($"Ошибка регистрации: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}");
+            }
         }
     }
 }
-        
 
-    
+
+

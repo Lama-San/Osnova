@@ -88,23 +88,12 @@ public partial class Dayn1Context : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity
-                .ToTable("zap")
-                .HasCharSet("latin1")
-                .UseCollation("latin1_swedish_ci");
+            entity.ToTable("zap");
 
-            entity.Property(e => e.Id)
-                .HasColumnType("int(11)")
-                .HasColumnName("id");
-            entity.Property(e => e.Gpa)
-                .HasMaxLength(50)
-                .HasColumnName("GPA");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .HasColumnName("name");
-            entity.Property(e => e.Spec)
-                .HasMaxLength(50)
-                .HasColumnName("spec");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Gpa).HasPrecision(3, 2);
+            entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.Spec).HasMaxLength(255);
         });
 
         OnModelCreatingPartial(modelBuilder);
