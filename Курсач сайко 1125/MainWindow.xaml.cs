@@ -1,6 +1,16 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+﻿using BD;
+using Microsoft.VisualBasic.ApplicationServices;
 using MySqlConnector;
 using System;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,30 +18,68 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Курсач_сайко_1125;
+using Microsoft.Data.SqlClient;
+using System.Drawing.Drawing2D;
+using System.Drawing;
+using System.Diagnostics;
+
 namespace CollegeAdmissionAutomation
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string searchText = "";
-        public List<Applicant> _originalApplicants = new List<Applicant>();
+
         private readonly Login login;
-        public List<Zap> Zaps { get; set; }
+        private Zap selectedzap;
         public MainWindowViewModel ViewModel { get; set; }
-        private ObservableCollection<Applicant> _applicants = new ObservableCollection<Applicant>();
+
         public event PropertyChangedEventHandler? PropertyChanged;
         void Signal(string prop) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        public ObservableCollection<Applicant> Applicants { get => _applicants; set => SetProperty(ref _applicants, value); }
 
-        private void SetProperty(ref ObservableCollection<Applicant> applicants, ObservableCollection<Applicant> value)
-        {
-            throw new NotImplementedException();
-        }
+
+
+        public List<Zap> Zaps { get; set; }
+
+
         public MainWindow(Login login)
         {
             InitializeComponent();
+            FillStyles();
             this.login = login;
             DataContext = this;
-            
+
+        }
+        private void FillStyles()
+        {
+            Zaps = new List<Zap>();
+
+            try
+            {
+                using var connection = DB.Instance.Database.GetDbConnection() as MySqlConnection;
+                connection.Open();
+
+                using var command = new MySqlCommand("SELECT * FROM Zap", connection);
+                using var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Zaps.Add(new Zap
+                    {
+                        Id = reader.GetString("Id"),
+                        Name = reader.GetString("Name"),
+                        Gpa = reader.GetDecimal("Gpa")
+                    });
+                }
+
+                if (Zaps.Any())
+                {
+                    selectedzap = Zaps.First();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An error occurred while fetching data from the database: {ex.Message}");
+            }
         }
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
@@ -68,46 +116,44 @@ namespace CollegeAdmissionAutomation
                 ViewModel.CancelSearchCommand.Execute(null);
             }
         }
-        public class Applicant : INotifyPropertyChanged
+        public class Zap : INotifyPropertyChanged
         {
-            private string _applicantID;
-            private string _name;
-            private decimal _gpa;
+            
 
-            public string ApplicantID
+            public string Id
             {
-                get => _applicantID;
+                get =>  Id;
                 set
                 {
-                    _applicantID = value;
+                    Id = value;
                     OnPropertyChanged();
                 }
             }
             public string Name
             {
-                get => _name;
+                get => Name;
                 set
                 {
-                    _name = value;
+                    Name = value;
                     OnPropertyChanged();
                 }
             }
-            public decimal GPA
+            public decimal Gpa
             {
-                get => _gpa;
+                get => Gpa;
                 set
                 {
-                    _gpa = value;
+                    Gpa = value;
                     OnPropertyChanged();
                 }
             }
-            private Applicant _selectedApplicant;
-            public Applicant SelectedApplicant
+            private Zap selectedApplicant;
+            public Zap SelectedApplicant
             {
-                get => _selectedApplicant;
+                get => selectedApplicant;
                 set
                 {
-                    _selectedApplicant = value;
+                    selectedApplicant = value;
                     OnPropertyChanged();
                 }
             }
@@ -118,29 +164,29 @@ namespace CollegeAdmissionAutomation
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        public class MainWindowViewModel 
+        public class MainWindowViewModel
         {
-            private ObservableCollection<Applicant> _applicants;
+            private ObservableCollection<Zap> zaps;
             public event PropertyChangedEventHandler PropertyChanged;
 
             protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
-            public ObservableCollection<Applicant> Applicants
+            public ObservableCollection<Zap> Zaps
             {
-                get => _applicants;
+                get => zaps;
                 set
                 {
-                    _applicants = value;
+                    zaps = value;
                     OnPropertyChanged();
                 }
             }
             public ICommand SearchCommand { get; private set; }
             public ICommand CancelSearchCommand { get; private set; }
 
-            private IEnumerable<Applicant> _filteredApplicants;
-            public IEnumerable<Applicant> FilteredApplicants
+            private IEnumerable<Zap> _filteredApplicants;
+            public IEnumerable<Zap> FilteredApplicants
             {
                 get => _filteredApplicants;
                 set
@@ -149,10 +195,10 @@ namespace CollegeAdmissionAutomation
                     OnPropertyChanged();
                 }
             }
-            public MainWindowViewModel(IEnumerable<Applicant> applicants)
+            public MainWindowViewModel(IEnumerable<Zap> zaps)
             {
-                _applicants = new ObservableCollection<Applicant>(applicants);
-                FilteredApplicants = _applicants;
+                zaps = new ObservableCollection<Zap>(zaps);
+                FilteredApplicants = zaps;
 
                 SearchCommand = new RelayCommand(SearchApplicants, _ => true);
                 CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
@@ -161,12 +207,12 @@ namespace CollegeAdmissionAutomation
             {
                 if (searchTerm is string term)
                 {
-                    FilteredApplicants = _applicants.Where(a => a.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+                    FilteredApplicants = zaps.Where(a => a.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
                 }
             }
             private void CancelSearch(object _)
             {
-                FilteredApplicants = _applicants;
+                FilteredApplicants = zaps;
             }
 
             internal void SearchApplicants(string searchTerm)
@@ -174,6 +220,7 @@ namespace CollegeAdmissionAutomation
                 throw new NotImplementedException();
             }
         }
+
         public class RelayCommand : ICommand
         {
             private readonly Action<object> _execute;
@@ -201,5 +248,5 @@ namespace CollegeAdmissionAutomation
                 remove => CommandManager.RequerySuggested -= value;
             }
         }
-    } 
+    }
 }
