@@ -16,9 +16,13 @@ public partial class Dayn1Context : DbContext
     {
     }
 
+    public virtual DbSet<Abiturient> Abiturients { get; set; }
+
     public virtual DbSet<Login> Logins { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Zap> Zaps { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -29,6 +33,19 @@ public partial class Dayn1Context : DbContext
         modelBuilder
             .UseCollation("utf8mb4_general_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Abiturient>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("abiturients");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Gpa)
+                .HasPrecision(3, 2)
+                .HasColumnName("GPA");
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
 
         modelBuilder.Entity<Login>(entity =>
         {
@@ -65,6 +82,29 @@ public partial class Dayn1Context : DbContext
                 .ValueGeneratedNever()
                 .HasColumnType("int(11)");
             entity.Property(e => e.Title).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Zap>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity
+                .ToTable("zap")
+                .HasCharSet("latin1")
+                .UseCollation("latin1_swedish_ci");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("int(11)")
+                .HasColumnName("id");
+            entity.Property(e => e.Gpa)
+                .HasMaxLength(50)
+                .HasColumnName("GPA");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Spec)
+                .HasMaxLength(50)
+                .HasColumnName("spec");
         });
 
         OnModelCreatingPartial(modelBuilder);

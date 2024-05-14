@@ -1,0 +1,36 @@
+﻿<Window x:Class="Курсач_сайко_1125.Dn_Registred"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Курсач_сайко_1125"
+        mc:Ignorable="d"
+        Title="Отправить заявку в ад :(" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Имя:" VerticalAlignment="Center"/>
+        <TextBox Grid.Column="1" Name="txtName" Width="150" Margin="5,0,0,0" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Name="cboSpec" Margin="5,0,0,0" SelectedItem="{Binding Path=Specialty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBoxItem Content="Програмист"/>
+            <ComboBoxItem Content="Сварщик"/>
+            <ComboBoxItem Content="Фрилансер(безработный)"/>
+        </ComboBox>
+
+        <Button Grid.Row="3" Grid.Column="1" Content="Register" HorizontalAlignment="Right" Margin="5,5,5,5" Click="Register_Click"/>
+    </Grid>
+</Window>

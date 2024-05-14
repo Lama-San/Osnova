@@ -12,6 +12,7 @@ namespace CollegeAdmissionAutomation
 {
     public partial class MainWindow : Window
     {
+        private string searchText = "";
         public List<Applicant> _originalApplicants = new List<Applicant>();
         private readonly Login login;
         public MainWindowViewModel ViewModel { get; set; }
@@ -23,8 +24,27 @@ namespace CollegeAdmissionAutomation
             throw new NotImplementedException();
         }
 
-        
 
+        private void applicantsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Get the selected item from the ListBox
+            ListBoxItem selectedItem = applicantsListBox.SelectedItem as ListBoxItem;
+
+            // Check if an item is selected
+            if (selectedItem != null)
+            {
+                // Get the text of the selected item
+                string selectedText = selectedItem.Content.ToString();
+
+                // Update the UI with the selected text
+                // Assuming you have a TextBox control named textBox1 in your XAML
+                TextBox textBox1 = FindName("textBox1") as TextBox;
+                if (textBox1 != null)
+                {
+                    textBox1.Text = $"You selected {selectedText}.";
+                }
+            }
+        }
         public MainWindow(Login login)
         {
             InitializeComponent();
@@ -42,7 +62,16 @@ namespace CollegeAdmissionAutomation
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            string searchTerm = searchTextBox.Text.Trim();
+            string searchTerm = searchTextBox.Text as string;
+
+            if (searchTerm != null)
+            {
+                searchTerm = searchTerm.Trim();
+            }
+            else
+            {
+                searchTerm = string.Empty;
+            }
 
             try
             {
@@ -53,7 +82,6 @@ namespace CollegeAdmissionAutomation
                 MessageBox.Show($"При поиске кандидатов произошла ошибка: {ex.Message}", "ААААШИБКА", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void CancelSearchButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel != null)
@@ -103,6 +131,16 @@ namespace CollegeAdmissionAutomation
             set
             {
                 _gpa = value;
+                OnPropertyChanged();
+            }
+        }
+        private Applicant _selectedApplicant;
+        public Applicant SelectedApplicant
+        {
+            get => _selectedApplicant;
+            set
+            {
+                _selectedApplicant = value;
                 OnPropertyChanged();
             }
         }
@@ -204,6 +242,7 @@ namespace CollegeAdmissionAutomation
             remove => CommandManager.RequerySuggested -= value;
         }
     }
+    
 }
 //private void SearchButton_Click(object sender, RoutedEventArgs e)
 //{

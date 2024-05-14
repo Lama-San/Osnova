@@ -21,13 +21,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <DataGrid x:Name="applicantsDataGrid" Margin="5" Grid.Column="0" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionChanged="applicantsDataGrid_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID Студента" Binding="{Binding ApplicantID}" />
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Средний балл" Binding="{Binding GPA}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            <ListBox x:Name="applicantsListBox" ItemsSource="{Binding Applicants}" Margin="5" Grid.Column="0" SelectionMode="Single" DisplayMemberPath="Name" SelectionChanged="applicantsListBox_SelectionChanged">
+            </ListBox>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
                 <Button x:Name="btnExit" Content="Выход" Click="btnExit_Click" Width="45" Height="391" />
