@@ -31,22 +31,23 @@ namespace Курсач_сайко_1125
 
         private void CheckAuth(string login, string pass)
         {
-            //Проверка на правильный ввод данных 
-            var user = DB.Instance.Logins.
-
-                FirstOrDefault(s => s.FirstName == login && s.Password == pass);
+            // Проверка на правильный ввод данных
+            var user = DB.Instance.Logins.FirstOrDefault(s => s.FirstName == login && s.Password == pass);
             if (user != null)
             {
-                new MainWindow(user).Show();
+                // If the login is successful, open the new window
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
                 Close();
             }
             else if (login == null || pass == null)
             {
                 ErrorMesage = "Неправильно указан логин или пароль!";
-
             }
-
-
+            else
+            {
+                ErrorMesage = "Неправильный логин или пароль!";
+            }
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)

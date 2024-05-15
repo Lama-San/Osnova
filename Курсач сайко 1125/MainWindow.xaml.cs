@@ -22,64 +22,19 @@ using Microsoft.Data.SqlClient;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using System.Diagnostics;
-
+//то что надо
 namespace CollegeAdmissionAutomation
 {
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        private string searchText = "";
-
-        private readonly Login login;
-        private Zap selectedzap;
-        public MainWindowViewModel ViewModel { get; set; }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        void Signal(string prop) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-
-
-
-        public List<Zap> Zaps { get; set; }
-
-
-        public MainWindow(Login login)
+        public MainWindow()
         {
             InitializeComponent();
-            FillStyles();
-            this.login = login;
-            DataContext = this;
-
+            DataContext = new MainViewModel(new Dayn1Context());
         }
-        private void FillStyles()
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            Zaps = new List<Zap>();
-
-            try
-            {
-                using var connection = DB.Instance.Database.GetDbConnection() as MySqlConnection;
-                connection.Open();
-
-                using var command = new MySqlCommand("SELECT * FROM Zap", connection);
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Zaps.Add(new Zap
-                    {
-                        Id = reader.GetString("Id"),
-                        Name = reader.GetString("Name"),
-                        Gpa = reader.GetDecimal("Gpa")
-                    });
-                }
-
-                if (Zaps.Any())
-                {
-                    selectedzap = Zaps.First();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"An error occurred while fetching data from the database: {ex.Message}");
-            }
+            // Add implementation for the SearchButton_Click method
         }
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
@@ -87,166 +42,138 @@ namespace CollegeAdmissionAutomation
             logIn.Show();
             this.Close();
         }
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+    }
+
+    public class Zap : INotifyPropertyChanged
+    {
+        public int Id { get; set; }
+
+        private string name;
+        public string Name
         {
-            string searchTerm = searchTextBox.Text as string;
-
-            if (searchTerm != null)
+            get => name;
+            set
             {
-                searchTerm = searchTerm.Trim();
-            }
-            else
-            {
-                searchTerm = string.Empty;
-            }
-
-            try
-            {
-                ViewModel.SearchApplicants(searchTerm);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"При поиске кандидатов произошла ошибка: {ex.Message}", "ААААШИБКА", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        private void CancelSearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel != null)
-            {
-                ViewModel.CancelSearchCommand.Execute(null);
-            }
-        }
-        public class Zap : INotifyPropertyChanged
-        {
-            
-
-            public string Id
-            {
-                get =>  Id;
-                set
+                if (name != value)
                 {
-                    Id = value;
-                    OnPropertyChanged();
+                    name = value;
+                    OnPropertyChanged(nameof(Name));
                 }
-            }
-            public string Name
-            {
-                get => Name;
-                set
-                {
-                    Name = value;
-                    OnPropertyChanged();
-                }
-            }
-            public decimal Gpa
-            {
-                get => Gpa;
-                set
-                {
-                    Gpa = value;
-                    OnPropertyChanged();
-                }
-            }
-            private Zap selectedApplicant;
-            public Zap SelectedApplicant
-            {
-                get => selectedApplicant;
-                set
-                {
-                    selectedApplicant = value;
-                    OnPropertyChanged();
-                }
-            }
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        public class MainWindowViewModel
-        {
-            private ObservableCollection<Zap> zaps;
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-            public ObservableCollection<Zap> Zaps
-            {
-                get => zaps;
-                set
-                {
-                    zaps = value;
-                    OnPropertyChanged();
-                }
-            }
-            public ICommand SearchCommand { get; private set; }
-            public ICommand CancelSearchCommand { get; private set; }
-
-            private IEnumerable<Zap> _filteredApplicants;
-            public IEnumerable<Zap> FilteredApplicants
-            {
-                get => _filteredApplicants;
-                set
-                {
-                    _filteredApplicants = value;
-                    OnPropertyChanged();
-                }
-            }
-            public MainWindowViewModel(IEnumerable<Zap> zaps)
-            {
-                zaps = new ObservableCollection<Zap>(zaps);
-                FilteredApplicants = zaps;
-
-                SearchCommand = new RelayCommand(SearchApplicants, _ => true);
-                CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
-            }
-            private void SearchApplicants(object searchTerm)
-            {
-                if (searchTerm is string term)
-                {
-                    FilteredApplicants = zaps.Where(a => a.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
-                }
-            }
-            private void CancelSearch(object _)
-            {
-                FilteredApplicants = zaps;
-            }
-
-            internal void SearchApplicants(string searchTerm)
-            {
-                throw new NotImplementedException();
             }
         }
 
-        public class RelayCommand : ICommand
+        private decimal gpa;
+        public decimal Gpa
         {
-            private readonly Action<object> _execute;
-            private readonly Predicate<object> _canExecute;
-
-            public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+            get => gpa;
+            set
             {
-                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-                _canExecute = canExecute;
-            }
-
-            public bool CanExecute(object parameter)
-            {
-                return _canExecute == null || _canExecute(parameter);
-            }
-
-            public void Execute(object parameter)
-            {
-                _execute(parameter);
-            }
-
-            public event EventHandler CanExecuteChanged
-            {
-                add => CommandManager.RequerySuggested += value;
-                remove => CommandManager.RequerySuggested -= value;
+                if (gpa != value)
+                {
+                    gpa = value;
+                    OnPropertyChanged(nameof(Gpa));
+                }
             }
         }
+
+        private string spec;
+        public string Spec
+        {
+            get => spec;
+            set
+            {
+                if (spec != value)
+                {
+                    spec = value;
+                    OnPropertyChanged(nameof(Spec));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+
+public class MainViewModel : INotifyPropertyChanged
+{
+    private readonly Dayn1Context _context;
+    private string _searchText = "";
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public ObservableCollection<Zap> Zaps { get; private set; }
+    public ICommand SearchCommand { get; private set; }
+    public ICommand CancelSearchCommand { get; private set; }
+
+    private IEnumerable<Zap> _filteredApplicants;
+    public IEnumerable<Zap> FilteredApplicants
+    {
+        get => _filteredApplicants;
+        set
+        {
+            _filteredApplicants = value;
+            OnPropertyChanged(nameof(FilteredApplicants));
+        }
+    }
+
+    public MainViewModel(Dayn1Context context)
+    {
+        _context = context;
+        Zaps = new ObservableCollection<Zap>(context.Zaps.ToList());
+        FilteredApplicants = Zaps;
+
+        SearchCommand = new RelayCommand(SearchApplicants, _ => true);
+        CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
+    }
+
+    private void SearchApplicants(object searchTerm)
+    {
+        if (searchTerm is string term)
+        {
+            FilteredApplicants = Zaps.Where(a => a.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    private void CancelSearch(object _)
+    {
+        FilteredApplicants = Zaps;
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+
+public class RelayCommand : ICommand
+{
+    private readonly Action<object> _execute;
+    private readonly Predicate<object> _canExecute;
+
+    public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+    {
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        _canExecute = canExecute;
+    }
+
+    public bool CanExecute(object parameter)
+    {
+        return _canExecute == null || _canExecute(parameter);
+    }
+
+    public void Execute(object parameter)
+    {
+        _execute(parameter);
+    }
+
+    public event EventHandler CanExecuteChanged
+    {
+        add => CommandManager.RequerySuggested += value;
+        remove => CommandManager.RequerySuggested -= value;
     }
 }

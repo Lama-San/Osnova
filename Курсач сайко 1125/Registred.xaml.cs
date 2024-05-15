@@ -75,10 +75,9 @@ namespace Курсач_сайко_1125
                 DB.GetInstance().SaveChanges();
 
                 MessageBox.Show("Регистрация прошла успешно!");
-                new MainWindow(login).Show();
                 this.Close();
-                
-              
+
+
             }
         }
         private void btnRegister_Click(object sender, RoutedEventArgs e)
