@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Курсач_сайко_1125;
 using System.Runtime.CompilerServices;
 using System.Linq;
+
 namespace CollegeAdmissionAutomation.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
@@ -23,9 +24,10 @@ namespace CollegeAdmissionAutomation.ViewModels
         public IQueryable<Zap> Zaps { get; private set; }
         public ICommand SearchCommand { get; private set; }
         public ICommand CancelSearchCommand { get; private set; }
-        private ObservableCollection<Zap> _filteredApplicants;
-     
+        public ICommand EnrollCommand { get; private set; }
+        public ICommand NotTodayCommand { get; private set; }
 
+        private ObservableCollection<Zap> _filteredApplicants;
         public ObservableCollection<Zap> FilteredApplicants
         {
             get => _filteredApplicants;
@@ -42,7 +44,10 @@ namespace CollegeAdmissionAutomation.ViewModels
             LoadZaps();
             SearchCommand = new RelayCommand(SearchApplicants, _ => true);
             CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
+            EnrollCommand = new RelayCommand(Enroll, zap => zap != null);
+            NotTodayCommand = new RelayCommand(NotToday, zap => zap != null);
         }
+
         private async Task LoadZaps()
         {
             try
@@ -68,8 +73,6 @@ namespace CollegeAdmissionAutomation.ViewModels
             }
         }
 
-
-
         private void FilterZapsByName(string searchText)
         {
             if (string.IsNullOrEmpty(searchText))
@@ -78,23 +81,9 @@ namespace CollegeAdmissionAutomation.ViewModels
             }
             else
             {
-                try
-                {
-                    var zaps = _context.Zaps
-                        .Where(z => z.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                        .Select(z => MapZap(z))
-                        .ToList();
-
-                    FilteredApplicants = new ObservableCollection<Zap>(zaps);
-                }
-                catch (Exception ex)
-                {
-                    // Log the error or handle it appropriately
-                    Debug.WriteLine($"Error filtering zaps: {ex.Message}");
-                }
+                FilteredApplicants = new ObservableCollection<Zap>(Zaps.Where(z => z.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
             }
         }
-
 
         private CollegeAdmissionAutomation.Zap MapZap(Курсач_сайко_1125.Zap zap)
         {
@@ -103,9 +92,10 @@ namespace CollegeAdmissionAutomation.ViewModels
                 Id = zap.Id,
                 Name = zap.Name,
                 Gpa = zap.Gpa,
-                Spec = zap.Spec,
+                Spec = zap.Spec
             };
         }
+
         private void SearchApplicants(object searchTerm)
         {
             if (searchTerm is string term)
@@ -119,37 +109,29 @@ namespace CollegeAdmissionAutomation.ViewModels
             FilteredApplicants = new ObservableCollection<Zap>(Zaps);
         }
 
+        private void Enroll(object zap)
+        {
+            if (zap is Zap zapToEnroll)
+            {
+                // Enroll the zap in the database
+                _context.Zaps.Update(zapToEnroll);
+                _context.SaveChanges();
+            }
+        }
+
+        private void NotToday(object zap)
+        {
+            if (zap is Zap zapToRemove)
+            {
+                // Remove the zap from the database
+                _context.Zaps.Remove(zapToRemove);
+                _context.SaveChanges();
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
-
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute(parameter);
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add => CommandManager.RequerySuggested += value;
-            remove => CommandManager.RequerySuggested -= value;
         }
     }
 }
