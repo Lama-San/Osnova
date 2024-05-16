@@ -22,6 +22,7 @@ namespace Курсач_сайко_1125
         public Dn_Registred()
         {
             InitializeComponent();
+            
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
@@ -40,7 +41,11 @@ namespace Курсач_сайко_1125
                 return;
             }
 
-            string spec = cboSpec.SelectedItem?.ToString();
+            string spec = "";
+            if (cboSpec.SelectedItem is ComboBoxItem item)
+            {
+                spec = item.Content.ToString();
+            }
 
             try
             {
@@ -68,6 +73,7 @@ namespace Курсач_сайко_1125
                 MessageBox.Show($"Ошибка: {ex.Message}");
             }
         }
+
     }
 }
 

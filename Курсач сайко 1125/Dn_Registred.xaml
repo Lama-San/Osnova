@@ -5,12 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Курсач_сайко_1125"
         mc:Ignorable="d"
-        Title="Отправить заявку в ад :(" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        Title="Отправить заявку в ад :(" Height="183" Width="400" ResizeMode="CanMinimize">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -18,19 +14,26 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Имя:" VerticalAlignment="Center"/>
-        <TextBox Grid.Column="1" Name="txtName" Width="150" Margin="5,0,0,0" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBlock Text="Имя:" VerticalAlignment="Center" FontSize="14"/>
+        <TextBox Grid.Column="1" Name="txtName" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center" FontSize="14"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="2" Grid.Column="1" Name="cboSpec" Margin="5,0,0,0" SelectedItem="{Binding Path=Specialty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ComboBoxItem Content="Програмист"/>
             <ComboBoxItem Content="Сварщик"/>
             <ComboBoxItem Content="Фрилансер(безработный)"/>
+            <ComboBoxItem Content="Нефтянник"/>
+            <ComboBoxItem Content="Пилить нохти)"/>
         </ComboBox>
 
-        <Button Grid.Row="3" Grid.Column="1" Content="Register" HorizontalAlignment="Right" Margin="5,5,5,5" Click="Register_Click"/>
+        <Button Grid.Row="3" Grid.Column="1" Content="Регистрация" HorizontalAlignment="Left" Margin="155,18,0,18" FontSize="14" Padding="10,2" Click="Register_Click" Width="101"/>
     </Grid>
 </Window>
