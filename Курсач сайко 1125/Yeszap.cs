@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Курсач_сайко_1125;
 
-public partial class Zap
+public partial class Yeszap
 {
     public int Id { get; set; }
 

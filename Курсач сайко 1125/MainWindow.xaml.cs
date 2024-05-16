@@ -42,6 +42,11 @@ namespace CollegeAdmissionAutomation
             logIn.Show();
             this.Close();
         }
+        private void OpenTheBlessedOnesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainViewModel = (MainViewModel)DataContext;
+            mainViewModel.OpenTheBlessedOnesCommand.Execute(null);
+        }
     }
 
     public class Zap : INotifyPropertyChanged
@@ -144,6 +149,7 @@ public class MainViewModel : INotifyPropertyChanged
         FilteredApplicants = Zaps;
     }
 
+    
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

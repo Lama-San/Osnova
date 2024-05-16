@@ -20,6 +20,8 @@ public partial class Dayn1Context : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<Yeszap> Yeszaps { get; set; }
+
     public virtual DbSet<Zap> Zaps { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -45,16 +47,8 @@ public partial class Dayn1Context : DbContext
                 .HasColumnType("int(11)");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.FirstName).HasMaxLength(255);
-            entity.Property(e => e.Gpa)
-                .HasPrecision(10)
-                .HasColumnName("GPA");
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasColumnType("int(11)");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.Logins)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_login_role_Id");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -67,6 +61,18 @@ public partial class Dayn1Context : DbContext
                 .ValueGeneratedNever()
                 .HasColumnType("int(11)");
             entity.Property(e => e.Title).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Yeszap>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("yeszap");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Gpa).HasPrecision(3, 2);
+            entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.Spec).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Zap>(entity =>

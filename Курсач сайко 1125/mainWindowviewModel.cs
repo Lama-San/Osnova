@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Курсач_сайко_1125;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Windows;
 
 namespace CollegeAdmissionAutomation.ViewModels
 {
@@ -26,8 +27,11 @@ namespace CollegeAdmissionAutomation.ViewModels
         public ICommand CancelSearchCommand { get; private set; }
         public ICommand EnrollCommand { get; private set; }
         public ICommand NotTodayCommand { get; private set; }
+        public ICommand OpenTheBlessedOnesCommand { get; private set; }
 
+        private Zap? _selectedApplicant;
         private ObservableCollection<Zap> _filteredApplicants;
+        private ObservableCollection<Yeszap> _yeszap;
         public ObservableCollection<Zap> FilteredApplicants
         {
             get => _filteredApplicants;
@@ -37,15 +41,35 @@ namespace CollegeAdmissionAutomation.ViewModels
                 OnPropertyChanged(nameof(FilteredApplicants));
             }
         }
+        public ObservableCollection<Yeszap> Yeszap
+        {
+            get => _yeszap;
+            set
+            {
+                _yeszap = value;
+                OnPropertyChanged(nameof(Yeszap));
+            }
+        }
 
+        public Zap? SelectedApplicant
+        {
+            get => _selectedApplicant;
+            set
+            {
+                _selectedApplicant = value;
+                OnPropertyChanged(nameof(SelectedApplicant));
+            }
+        }
         public MainViewModel(Dayn1Context context)
         {
             _context = context;
             LoadZaps();
             SearchCommand = new RelayCommand(SearchApplicants, _ => true);
             CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
-            EnrollCommand = new RelayCommand(Enroll, zap => zap != null);
-            NotTodayCommand = new RelayCommand(NotToday, zap => zap != null);
+            Yeszap = new ObservableCollection<Yeszap>();
+            EnrollCommand = new RelayCommand(OnEnrollClick, _ => SelectedApplicant != null);
+            NotTodayCommand = new RelayCommand(OnNotTodayClick, _ => SelectedApplicant != null);
+            OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true);
         }
 
         private async Task LoadZaps()
@@ -109,24 +133,35 @@ namespace CollegeAdmissionAutomation.ViewModels
             FilteredApplicants = new ObservableCollection<Zap>(Zaps);
         }
 
-        private void Enroll(object zap)
+        private void OnOpenTheBlessedOnes(object _)
         {
-            if (zap is Zap zapToEnroll)
+            var theBlessedOnesWindow = new TheBlessedOnes(this);
+            theBlessedOnesWindow.Show();
+        }
+        private async void OnEnrollClick(object _)
+        {
+            if (SelectedApplicant != null)
             {
-                // Enroll the zap in the database
-                _context.Zaps.Update(zapToEnroll);
-                _context.SaveChanges();
+                Yeszap.Add(new Yeszap
+                {
+                    Id = SelectedApplicant.Id,
+                    Name = SelectedApplicant.Name,
+                    Gpa = SelectedApplicant.Gpa,
+                    Spec = SelectedApplicant.Spec
+                });
+
+                // Remove the applicant from Zaps
+                _context.Zaps.Remove(_context.Zaps.First(z => z.Id == SelectedApplicant.Id));
+                await _context.SaveChangesAsync();
+
+                // Reset the selected applicant
+                SelectedApplicant = null;
             }
         }
 
-        private void NotToday(object zap)
+        private void OnNotTodayClick(object _)
         {
-            if (zap is Zap zapToRemove)
-            {
-                // Remove the zap from the database
-                _context.Zaps.Remove(zapToRemove);
-                _context.SaveChanges();
-            }
+            // Add your logic here if needed
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
