@@ -16,10 +16,18 @@ namespace Курсач_сайко_1125
 {
     public partial class TheBlessedOnes : Window
     {
+        private Dayn1Context _dayn1Context;
+
         public TheBlessedOnes(MainViewModel mainViewModel)
         {
             InitializeComponent();
             DataContext = mainViewModel;
         }
+
+        public TheBlessedOnes(Dayn1Context dayn1Context)
+        {
+            _dayn1Context = dayn1Context;
+        }
+      
     }
 }

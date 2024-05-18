@@ -22,6 +22,7 @@ using Microsoft.Data.SqlClient;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using System.Diagnostics;
+using CollegeAdmissionAutomation.ViewModels;
 //то что надо
 namespace CollegeAdmissionAutomation
 {
@@ -32,20 +33,69 @@ namespace CollegeAdmissionAutomation
             InitializeComponent();
             DataContext = new MainViewModel(new Dayn1Context());
         }
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Add implementation for the SearchButton_Click method
-        }
+        
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
-            LogIn logIn = new LogIn();
-            logIn.Show();
-            this.Close();
+            new LogIn().Show();
+            Close();
         }
-        private void OpenTheBlessedOnesButton_Click(object sender, RoutedEventArgs e)
+        private void TheBlessedOnes(object sender, RoutedEventArgs e)
         {
-            var mainViewModel = (MainViewModel)DataContext;
-            mainViewModel.OpenTheBlessedOnesCommand.Execute(null);
+            TheBlessedOnes theBlessedOnes = new TheBlessedOnes((MainViewModel)DataContext);
+            theBlessedOnes.Show();
+        }
+        private void Zachislit(object sender, RoutedEventArgs e)
+        {
+            if (SelectedZap != null)
+            {
+                using (var context = new Dayn1Context())
+                {
+                    var yeszap = new Yeszap
+                    {
+                        Name = SelectedZap.Name,
+                        Gpa = SelectedZap.Gpa,
+                        Spec = SelectedZap.Spec
+                    };
+
+                    context.Yeszaps.Add(yeszap);
+                    context.SaveChanges();
+                }
+
+                SelectedZap = null;
+            }
+        }
+
+
+        public List<Zap> zap { get; set; }
+
+        private void Remove(object sender, RoutedEventArgs e)
+        {
+            if (SelectedZap != null)
+            {
+                using (var context = new Dayn1Context())
+                {
+                    var zap = context.Zaps.Find(SelectedZap.Id);
+                    if (zap != null)
+                    {
+                        context.Zaps.Remove(zap);
+                        context.SaveChanges();
+                    }
+                }
+
+                SelectedZap = null;
+            }
+        }
+
+        private Zap selectedZap;
+
+        public Zap SelectedZap
+        {
+            get => selectedZap;
+            set
+            {
+                selectedZap = value;
+               
+            }
         }
     }
 
@@ -81,6 +131,8 @@ namespace CollegeAdmissionAutomation
             }
         }
 
+        
+
         private string spec;
         public string Spec
         {
@@ -96,8 +148,10 @@ namespace CollegeAdmissionAutomation
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public void Signal([CallerMemberName] string prop = null) =>
+           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

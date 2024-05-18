@@ -29,6 +29,7 @@ namespace CollegeAdmissionAutomation.ViewModels
         public ICommand NotTodayCommand { get; private set; }
         public ICommand OpenTheBlessedOnesCommand { get; private set; }
 
+
         private Zap? _selectedApplicant;
         private ObservableCollection<Zap> _filteredApplicants;
         private ObservableCollection<Yeszap> _yeszap;
@@ -66,13 +67,11 @@ namespace CollegeAdmissionAutomation.ViewModels
             LoadZaps();
             SearchCommand = new RelayCommand(SearchApplicants, _ => true);
             CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
-            Yeszap = new ObservableCollection<Yeszap>();
-            EnrollCommand = new RelayCommand(OnEnrollClick, _ => SelectedApplicant != null);
-            NotTodayCommand = new RelayCommand(OnNotTodayClick, _ => SelectedApplicant != null);
+            Yeszap = new ObservableCollection<Yeszap>();          
             OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true);
         }
 
-        private async Task LoadZaps()
+         private async Task LoadZaps()
         {
             try
             {
@@ -81,8 +80,7 @@ namespace CollegeAdmissionAutomation.ViewModels
             }
             catch (Exception ex)
             {
-                // Log the error or handle it appropriately
-                Debug.WriteLine($"Error loading zaps: {ex.Message}");
+                throw new InvalidOperationException("Error loading zaps", ex);
             }
         }
 
@@ -93,10 +91,9 @@ namespace CollegeAdmissionAutomation.ViewModels
             {
                 _searchText = value;
                 OnPropertyChanged(nameof(SearchText));
-                FilterZapsByName(value);
+                FilteredApplicants = new ObservableCollection<Zap>(Zaps.Where(z => z.Name.Contains(value, StringComparison.OrdinalIgnoreCase)));
             }
         }
-
         private void FilterZapsByName(string searchText)
         {
             if (string.IsNullOrEmpty(searchText))
@@ -124,7 +121,7 @@ namespace CollegeAdmissionAutomation.ViewModels
         {
             if (searchTerm is string term)
             {
-                FilteredApplicants = new ObservableCollection<Zap>(Zaps.Where(a => a.Name.Contains(term, StringComparison.OrdinalIgnoreCase)));
+                SearchText = term;
             }
         }
 
@@ -132,36 +129,10 @@ namespace CollegeAdmissionAutomation.ViewModels
         {
             FilteredApplicants = new ObservableCollection<Zap>(Zaps);
         }
-
         private void OnOpenTheBlessedOnes(object _)
         {
-            var theBlessedOnesWindow = new TheBlessedOnes(this);
-            theBlessedOnesWindow.Show();
-        }
-        private async void OnEnrollClick(object _)
-        {
-            if (SelectedApplicant != null)
-            {
-                Yeszap.Add(new Yeszap
-                {
-                    Id = SelectedApplicant.Id,
-                    Name = SelectedApplicant.Name,
-                    Gpa = SelectedApplicant.Gpa,
-                    Spec = SelectedApplicant.Spec
-                });
-
-                // Remove the applicant from Zaps
-                _context.Zaps.Remove(_context.Zaps.First(z => z.Id == SelectedApplicant.Id));
-                await _context.SaveChangesAsync();
-
-                // Reset the selected applicant
-                SelectedApplicant = null;
-            }
-        }
-
-        private void OnNotTodayClick(object _)
-        {
-            // Add your logic here if needed
+            var theBlessedOnes = new TheBlessedOnes(_context);
+            theBlessedOnes.Show();
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

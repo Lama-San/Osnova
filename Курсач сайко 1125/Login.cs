@@ -14,4 +14,8 @@ public partial class Login
     public string? Email { get; set; }
 
     public int RoleId { get; set; }
+
+    public decimal? Gpa { get; set; }
+
+    public virtual Role Role { get; set; } = null!;
 }
