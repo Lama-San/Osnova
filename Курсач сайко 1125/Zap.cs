@@ -12,6 +12,4 @@ public partial class Zap
     public decimal Gpa { get; set; }
 
     public string Spec { get; set; } = null!;
-
-    public virtual Yeszap? Yeszap { get; set; }
 }

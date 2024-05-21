@@ -33,7 +33,7 @@ namespace CollegeAdmissionAutomation
             InitializeComponent();
             DataContext = new MainViewModel(new Dayn1Context());
         }
-        
+
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             new LogIn().Show();
@@ -44,48 +44,8 @@ namespace CollegeAdmissionAutomation
             TheBlessedOnes theBlessedOnes = new TheBlessedOnes((MainViewModel)DataContext);
             theBlessedOnes.Show();
         }
-        private void Zachislit(object sender, RoutedEventArgs e)
-        {
-            if (SelectedZap != null)
-            {
-                using (var context = new Dayn1Context())
-                {
-                    var yeszap = new Yeszap
-                    {
-                        Name = SelectedZap.Name,
-                        Gpa = SelectedZap.Gpa,
-                        Spec = SelectedZap.Spec
-                    };
-
-                    context.Yeszaps.Add(yeszap);
-                    context.SaveChanges();
-                }
-
-                SelectedZap = null;
-            }
-        }
-
-
-        public List<Zap> zap { get; set; }
-
-        private void Remove(object sender, RoutedEventArgs e)
-        {
-            if (SelectedZap != null)
-            {
-                using (var context = new Dayn1Context())
-                {
-                    var zap = context.Zaps.Find(SelectedZap.Id);
-                    if (zap != null)
-                    {
-                        context.Zaps.Remove(zap);
-                        context.SaveChanges();
-                    }
-                }
-
-                SelectedZap = null;
-            }
-        }
-
+        
+        
         private Zap selectedZap;
 
         public Zap SelectedZap
@@ -94,7 +54,6 @@ namespace CollegeAdmissionAutomation
             set
             {
                 selectedZap = value;
-               
             }
         }
     }

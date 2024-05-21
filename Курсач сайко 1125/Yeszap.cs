@@ -12,6 +12,4 @@ public partial class Yeszap
     public decimal Gpa { get; set; }
 
     public string Spec { get; set; } = null!;
-
-    public virtual Zap IdNavigation { get; set; } = null!;
 }

@@ -37,7 +37,7 @@ namespace Курсач_сайко_1125
             decimal gpa;
             if (!decimal.TryParse(txtGpa.Text, out gpa))
             {
-                MessageBox.Show("Некорректное значение GPA");
+                MessageBox.Show("Некорректное значение Среднего балла");
                 return;
             }
 
@@ -61,7 +61,7 @@ namespace Курсач_сайко_1125
                         command.ExecuteNonQuery();
                     }
                 }
-                MessageBox.Show($"Регистрация успешна, ждите и варитесь(");
+                MessageBox.Show($"То");
                 Close();
             }
             catch (MySqlException ex)

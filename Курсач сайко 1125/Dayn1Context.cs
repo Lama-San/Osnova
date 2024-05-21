@@ -47,16 +47,8 @@ public partial class Dayn1Context : DbContext
                 .HasColumnType("int(11)");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.FirstName).HasMaxLength(255);
-            entity.Property(e => e.Gpa)
-                .HasPrecision(10)
-                .HasColumnName("GPA");
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasColumnType("int(11)");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.Logins)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_login_role_Id");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -69,6 +61,10 @@ public partial class Dayn1Context : DbContext
                 .ValueGeneratedNever()
                 .HasColumnType("int(11)");
             entity.Property(e => e.Title).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Role)
+                .HasForeignKey<Role>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Yeszap>(entity =>
@@ -77,17 +73,10 @@ public partial class Dayn1Context : DbContext
 
             entity.ToTable("yeszap");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnType("int(11)");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Gpa).HasPrecision(3, 2);
             entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.Spec).HasMaxLength(255);
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Yeszap)
-                .HasForeignKey<Yeszap>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_yeszap");
         });
 
         modelBuilder.Entity<Zap>(entity =>

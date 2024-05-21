@@ -21,12 +21,11 @@ namespace CollegeAdmissionAutomation.ViewModels
         private string _searchText = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
-
+        public ICommand EnrollCommand { get; private set; }
+        public ICommand RemoveCommand { get; private set; }
         public IQueryable<Zap> Zaps { get; private set; }
         public ICommand SearchCommand { get; private set; }
         public ICommand CancelSearchCommand { get; private set; }
-        public ICommand EnrollCommand { get; private set; }
-        public ICommand NotTodayCommand { get; private set; }
         public ICommand OpenTheBlessedOnesCommand { get; private set; }
 
 
@@ -69,9 +68,52 @@ namespace CollegeAdmissionAutomation.ViewModels
             CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
             Yeszap = new ObservableCollection<Yeszap>();          
             OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true);
+            EnrollCommand = new RelayCommand(async _ => await EnrollApplicant(null), _ => SelectedApplicant != null);
+            RemoveCommand = new RelayCommand(async _ => await RemoveApplicant(null), _ => SelectedApplicant != null);
         }
+        private async Task EnrollApplicant(object _)
+        {
+            if (SelectedApplicant != null)
+            {
+                // Use the _context from the view model, not a new instance
+                var yeszap = new Yeszap
+                {
+                    Name = SelectedApplicant.Name,
+                    Gpa = SelectedApplicant.Gpa,
+                    Spec = SelectedApplicant.Spec
+                };
 
-         private async Task LoadZaps()
+                _context.Yeszaps.Add(yeszap);
+
+                var zapToRemove = _context.Zaps.Find(SelectedApplicant.Id);
+                if (zapToRemove != null)
+                {
+                    _context.Zaps.Remove(zapToRemove);
+                }
+
+                await _context.SaveChangesAsync();
+
+                SelectedApplicant = null;
+                await LoadZaps(); // Reload the data after the change
+            }
+        
+    }
+        private async Task RemoveApplicant(object _)
+        {
+            if (SelectedApplicant != null)
+            {
+                var zapToRemove = _context.Zaps.Find(SelectedApplicant.Id);
+                if (zapToRemove != null)
+                {
+                    _context.Zaps.Remove(zapToRemove);
+                    await _context.SaveChangesAsync();
+                }
+
+                SelectedApplicant = null;
+                await LoadZaps(); // Reload the data after the change
+            }
+        }
+        private async Task LoadZaps()
         {
             try
             {

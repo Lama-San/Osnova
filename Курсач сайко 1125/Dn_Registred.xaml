@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Курсач_сайко_1125"
         mc:Ignorable="d"
-        Title="Отправить заявку в ад :(" Height="183" Width="400" ResizeMode="CanMinimize">
+        Title=" :0" Height="183" Width="400" ResizeMode="CanMinimize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -27,7 +27,7 @@
 
         <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="2" Grid.Column="1" Name="cboSpec" Margin="5,0,0,0" SelectedItem="{Binding Path=Specialty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ComboBoxItem Content="Програмист"/>
+            <ComboBoxItem Content="ПрограМищь:)"/>
             <ComboBoxItem Content="Сварщик"/>
             <ComboBoxItem Content="Фрилансер(безработный)"/>
             <ComboBoxItem Content="Нефтянник"/>
