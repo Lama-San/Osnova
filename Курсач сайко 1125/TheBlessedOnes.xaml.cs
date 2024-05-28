@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CollegeAdmissionAutomation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,20 +15,15 @@ using System.Windows.Shapes;
 
 namespace Курсач_сайко_1125
 {
+
     public partial class TheBlessedOnes : Window
     {
-        private Dayn1Context _dayn1Context;
-
-        public TheBlessedOnes(MainViewModel mainViewModel)
+        public TheBlessedOnes(Dayn1Context context)
         {
             InitializeComponent();
-            DataContext = mainViewModel;
+            DataContext = new MainViewModel(context);
         }
-
-        public TheBlessedOnes(Dayn1Context dayn1Context)
-        {
-            _dayn1Context = dayn1Context;
-        }
-      
     }
+
+      
 }

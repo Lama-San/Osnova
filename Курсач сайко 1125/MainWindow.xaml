@@ -16,9 +16,9 @@
             <TextBox Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" />
             <Button Content="Поиск" Margin="5" Command="{Binding SearchCommand}" />
             <Button Content="Отмена поиска" Margin="5" Command="{Binding CancelSearchCommand}" />
-            <Button Content="Благославленные" Margin="5" Click="TheBlessedOnes" />
+            <Button Content="Благославленные" Margin="5" Command="{Binding OpenTheBlessedOnesCommand}" />
         </StackPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredApplicants}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedZap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredApplicants}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedApplicant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Средний балл" Binding="{Binding Gpa}" />
@@ -27,9 +27,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Decision}" Margin="5"/>
-                                <Button Command="{Binding EnrollCommand}" Content="Смиловаться" />
-                                <Button Command="{Binding RemoveCommand}" Content="Не судьба" />
+                                <Button Command="{Binding DataContext.EnrollCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" Content="Смиловаться" />
+                                <Button Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" Content="Не судьба" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

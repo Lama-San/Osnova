@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Курсач_сайко_1125"
         mc:Ignorable="d"
-        Title="Райские угодья)" Height="450" Width="800">
-
+        Title="Райские угодья" Height="450" Width="800">
     <Grid>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding YesZap}" SelectedItem="{Binding SelectedApplicant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Yeszap}" SelectedItem="{Binding SelectedApplicant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Средний балл" Binding="{Binding Gpa}" />
