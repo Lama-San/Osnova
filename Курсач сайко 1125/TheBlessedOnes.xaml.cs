@@ -1,6 +1,7 @@
 ﻿using CollegeAdmissionAutomation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,15 +16,15 @@ using System.Windows.Shapes;
 
 namespace Курсач_сайко_1125
 {
-
     public partial class TheBlessedOnes : Window
     {
-        public TheBlessedOnes(Dayn1Context context)
+        public ObservableCollection<Yeszap> Yeszap { get; set; }
+
+        public TheBlessedOnes(ObservableCollection<Yeszap> yeszap)
         {
             InitializeComponent();
-            DataContext = new MainViewModel(context);
+            DataContext = this;
+            Yeszap = yeszap;
         }
     }
-
-      
 }

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Райские угодья" Height="450" Width="800">
     <Grid>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Yeszap}" SelectedItem="{Binding SelectedApplicant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding Yeszap}" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Средний балл" Binding="{Binding Gpa}" />

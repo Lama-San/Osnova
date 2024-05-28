@@ -276,13 +276,13 @@
                 FilteredApplicants = new ObservableCollection<Zap>(Zaps);
             }
 
-            private void OnOpenTheBlessedOnes(object _)
-            {
-                var theBlessedOnes = new TheBlessedOnes(context);
-                theBlessedOnes.Show();
-            }
+        private void OnOpenTheBlessedOnes(object _)
+        {
+            var theBlessedOnes = new TheBlessedOnes(Yeszap);
+            theBlessedOnes.Show();
+        }
 
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
