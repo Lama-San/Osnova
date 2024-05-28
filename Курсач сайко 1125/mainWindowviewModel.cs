@@ -12,12 +12,13 @@ using Курсач_сайко_1125;
 using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Windows;
+using Курсач_сайко_1125.Models;
 
 namespace CollegeAdmissionAutomation.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly Dayn1Context _context;
+        private Dayn1Context _context;
         private string _searchText = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -27,7 +28,6 @@ namespace CollegeAdmissionAutomation.ViewModels
         public ICommand SearchCommand { get; private set; }
         public ICommand CancelSearchCommand { get; private set; }
         public ICommand OpenTheBlessedOnesCommand { get; private set; }
-
 
         private Zap? _selectedApplicant;
         private ObservableCollection<Zap> _filteredApplicants;
@@ -66,7 +66,7 @@ namespace CollegeAdmissionAutomation.ViewModels
             LoadZaps();
             SearchCommand = new RelayCommand(SearchApplicants, _ => true);
             CancelSearchCommand = new RelayCommand(CancelSearch, _ => true);
-            Yeszap = new ObservableCollection<Yeszap>();          
+            Yeszap = new ObservableCollection<Yeszap>();
             OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true);
             EnrollCommand = new RelayCommand(async _ => await EnrollApplicant(null), _ => SelectedApplicant != null);
             RemoveCommand = new RelayCommand(async _ => await RemoveApplicant(null), _ => SelectedApplicant != null);
@@ -84,11 +84,15 @@ namespace CollegeAdmissionAutomation.ViewModels
                 };
 
                 _context.Yeszaps.Add(yeszap);
+                _context.SaveChanges();
+                _context = new Dayn1Context();
 
-                var zapToRemove = _context.Zaps.Find(SelectedApplicant.Id);
+                var zapToRemove = _context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
                 if (zapToRemove != null)
                 {
-                    _context.Zaps.Remove(zapToRemove);
+                    var res = _context.Zaps.Where(s => s.Id == zapToRemove.Id).ExecuteDelete();
+
+                    if (res == 0) return;
                 }
 
                 await _context.SaveChangesAsync();
@@ -96,8 +100,8 @@ namespace CollegeAdmissionAutomation.ViewModels
                 SelectedApplicant = null;
                 await LoadZaps(); // Reload the data after the change
             }
-        
-    }
+
+        }
         private async Task RemoveApplicant(object _)
         {
             if (SelectedApplicant != null)
@@ -148,7 +152,8 @@ namespace CollegeAdmissionAutomation.ViewModels
             }
         }
 
-        private CollegeAdmissionAutomation.Zap MapZap(Курсач_сайко_1125.Zap zap)
+        
+        CollegeAdmissionAutomation.Zap MapZap(Курсач_сайко_1125.Models.Zap zap)
         {
             return new CollegeAdmissionAutomation.Zap
             {
