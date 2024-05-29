@@ -13,9 +13,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-            <TextBox Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <Button Content="Поиск" Margin="5" Command="{Binding SearchCommand}" />
-            <Button Content="Отмена поиска" Margin="5" Command="{Binding CancelSearchCommand}" />
+            <TextBox Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Благославленные" Margin="5" Command="{Binding OpenTheBlessedOnesCommand}" />
         </StackPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredApplicants}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedApplicant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">

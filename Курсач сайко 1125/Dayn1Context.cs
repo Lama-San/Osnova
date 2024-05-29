@@ -18,8 +18,6 @@ public partial class Dayn1Context : DbContext
 
     public virtual DbSet<Login> Logins { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<Yeszap> Yeszaps { get; set; }
 
     public virtual DbSet<Zap> Zaps { get; set; }
@@ -49,22 +47,6 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.FirstName).HasMaxLength(255);
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasColumnType("int(11)");
-        });
-
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("role");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("int(11)");
-            entity.Property(e => e.Title).HasMaxLength(255);
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Role)
-                .HasForeignKey<Role>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Yeszap>(entity =>

@@ -41,16 +41,7 @@ namespace Курсач_сайко_1125
                 Signal();
             }
         }
-        private int GetRoleIdFromDatabase()
-        {
-            
-            using (var context = new Dayn1Context())
-            {              
-                int roleId = context.Roles.FirstOrDefault()?.Id ?? default;
-
-                return roleId;
-            }
-        }
+       
         private void Check_Register(object sender, RoutedEventArgs e)
         {
             if (txtUsername == null || pwbPassword == null || txtEmail == null)
@@ -60,14 +51,14 @@ namespace Курсач_сайко_1125
             }
             else
             {
-                int roleId = GetRoleIdFromDatabase();
+                
 
                 var login = new Login
                 {
                     FirstName = txtUsername.Text,
                     Password = Password.Password,
                     Email = Email,
-                    RoleId = roleId
+                    
                 };
 
                 login.Id = DB.GetInstance().Logins.Any() ? DB.GetInstance().Logins.Max(l => l.Id) + 1 : 1;
