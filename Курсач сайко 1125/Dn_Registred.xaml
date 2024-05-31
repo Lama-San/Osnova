@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Курсач_сайко_1125"
         mc:Ignorable="d"
-        Title=" :0" Height="183" Width="400" ResizeMode="CanMinimize">
+        Title=" :0" Height="183" Width="400" ResizeMode="CanMinimize" Background="#FF31083A"  >
     <Grid Margin="10">
+        <Grid.Background>
+            <ImageBrush ImageSource="/1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg"/>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,14 +22,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Имя:" VerticalAlignment="Center" FontSize="14"/>
+        <TextBlock Text="Имя:" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
         <TextBox Grid.Column="1" Name="txtName" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center" FontSize="14"/>
+        <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
         <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center" Foreground="White"/>
         <ComboBox Grid.Row="2" Grid.Column="1" Name="cboSpec" Margin="5,0,0,0" SelectedItem="{Binding Path=Specialty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBox.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#FFF0F0F0"/>
+                    <GradientStop Color="#FF34C2D4" Offset="1"/>
+                </LinearGradientBrush>
+            </ComboBox.Background>
             <ComboBoxItem Content="ПрограМищь:)"/>
             <ComboBoxItem Content="Сварщик"/>
             <ComboBoxItem Content="Фрилансер(безработный)"/>
@@ -34,6 +43,10 @@
             <ComboBoxItem Content="Пилить нохти)"/>
         </ComboBox>
 
-        <Button Grid.Row="3" Grid.Column="1" Content="Регистрация" HorizontalAlignment="Left" Margin="155,18,0,18" FontSize="14" Padding="10,2" Click="Register_Click" Width="101"/>
+        <Button Grid.Row="3" Grid.Column="1" Content="Регистрация" HorizontalAlignment="Left" Margin="155,18,0,18" FontSize="14" Padding="10,2" Click="Register_Click" Width="101">
+            <Button.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

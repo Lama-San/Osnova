@@ -61,7 +61,7 @@ namespace Курсач_сайко_1125
                         command.ExecuteNonQuery();
                     }
                 }
-                MessageBox.Show($"То");
+                MessageBox.Show($"Удачи... она тебе пригодится там...");
                 Close();
             }
             catch (MySqlException ex)

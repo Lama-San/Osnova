@@ -27,13 +27,15 @@ namespace CollegeAdmissionAutomation
     {
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();          
             DataContext = new MainViewModel(new Dayn1Context());
         }
 
+
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
-            new LogIn().Show();
+            
+            new HelloPage().Show();          
             Close();
         }
 
@@ -111,16 +113,15 @@ namespace CollegeAdmissionAutomation
         private string searchText = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public ICommand EnrollCommand { get; private set; }
-        public ICommand RemoveCommand { get; private set; }
-        public IQueryable<Zap> Zaps { get; private set; }
-        public ICommand SearchCommand { get; private set; }
-        public ICommand CancelSearchCommand { get; private set; }
-        public ICommand OpenTheBlessedOnesCommand { get; private set; }
+        public ICommand EnrollCommand { get; private set; } // Команда для зачисления
+        public ICommand RemoveCommand { get; private set; } // Команда для удаления
+        public IQueryable<Zap> Zaps { get; private set; } // Запросы к таблице Zap
+        public IQueryable<Yeszap> Yeszaps { get; private set; } // Запросы к таблице Yeszap
+        public ICommand OpenTheBlessedOnesCommand { get; private set; } // Команда для открытия окна "Зачисленные"
 
-        private Zap? selectedApplicant;
-        private ObservableCollection<Zap> filteredApplicants;
-        private ObservableCollection<Yeszap> yeszap;
+        private Zap? selectedApplicant; // Выбранный кандидат
+        private ObservableCollection<Zap> filteredApplicants; // Отфильтрованные кандидаты
+        private ObservableCollection<Yeszap> yeszap; // Зачисленные кандидаты
         public ObservableCollection<Zap> FilteredApplicants
         {
             get => filteredApplicants;
@@ -153,80 +154,122 @@ namespace CollegeAdmissionAutomation
         public MainViewModel(Dayn1Context context)
         {
             this.context = context;
-            LoadZaps();
+            LoadZaps(); // Загружаем список кандидатов
+            LoadYeszaps(); // Загружаем список зачисленных
             Yeszap = new ObservableCollection<Yeszap>();
-            OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true);
-            EnrollCommand = new RelayCommand(param => EnrollApplicant(), _ => SelectedApplicant != null);
-            RemoveCommand = new RelayCommand(param => RemoveApplicant(), canExecute: _ => SelectedApplicant != null);
+            OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true); // Создаем команду для открытия окна "Зачисленные"
+            EnrollCommand = new RelayCommand(param => EnrollApplicant(), _ => SelectedApplicant != null); // Создаем команду для зачисления
+            RemoveCommand = new RelayCommand(param => RemoveApplicant(), canExecute: _ => SelectedApplicant != null); // Создаем команду для удаления
         }
         private async void EnrollApplicant()
         {
+            // Проверяем, выбран ли кандидат
             if (SelectedApplicant != null)
             {
-                // Use the _context from the view model, not a new instance
-                var yeszap = new Yeszap
+                // Проверяем, является ли выбранный параметр подходящим
+                if (!string.IsNullOrEmpty(SelectedApplicant.Name))
                 {
-                    Name = SelectedApplicant.Name,
-                    Gpa = SelectedApplicant.Gpa,
-                    Spec = SelectedApplicant.Spec
-                };
+                    // Создаем объект зачисленного кандидата
+                    var yeszap = new Yeszap
+                    {
+                        Name = SelectedApplicant.Name,
+                        Gpa = SelectedApplicant.Gpa,
+                        Spec = SelectedApplicant.Spec
+                    };
 
-                context.Yeszaps.Add(yeszap);
-                context.SaveChanges();
-                context = new Dayn1Context();
+                    // Добавляем объект в контекст и сохраняем изменения в базе данных
+                    context.Yeszaps.Add(yeszap);
+                    await context.SaveChangesAsync();
 
-                var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
-                if (zapToRemove != null)
-                {
-                    var res = context.Zaps.Where(s => s.Id == zapToRemove.Id).ExecuteDelete();
-
-                    if (res == 0) return;
-                }
-
-                await context.SaveChangesAsync();
-
-                SelectedApplicant = null;
-                await LoadZaps(); // Reload the data after the change
-            }
-
-        }
-
-        private async void RemoveApplicant()
-        {
-            try
-            {
-                if (SelectedApplicant != null)
-                {
-                    var zapToRemove = context.Zaps.Find(SelectedApplicant.Id);
+                    // После сохранения удаляем кандидата из списка кандидатов
+                    var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
                     if (zapToRemove != null)
                     {
                         context.Zaps.Remove(zapToRemove);
                         await context.SaveChangesAsync();
                     }
 
+                    // Сбрасываем выбранного кандидата
                     SelectedApplicant = null;
-                    await LoadZaps(); // Reload the data after the change
+                    // Перезагружаем список кандидатов
+                    await LoadZaps();
+                    // Перезагружаем список зачисленных
+                    await LoadYeszaps();
+                }
+                else
+                {
+                    // Выводит сообщение об ошибке, если введено неверное имя
+                    MessageBox.Show("Пожалуйста, выберите действительного кандидата.");
+                }
+            }
+        }
+
+        private async void RemoveApplicant()
+        {
+            // Обработка исключений
+            try
+            {
+                // Проверяем, выбран ли кандидат
+                if (SelectedApplicant != null)
+                {
+                    // Находим кандидата в контексте по его ID
+                    var zapToRemove = context.Zaps.Find(SelectedApplicant.Id);
+                    // Проверяем, найден ли кандидат
+                    if (zapToRemove != null)
+                    {
+                        // Удаляем кандидата из контекста
+                        context.Zaps.Remove(zapToRemove);
+                        // Сохраняем изменения в базе данных
+                        await context.SaveChangesAsync();
+                    }
+
+                    // Сбрасываем выбранного кандидата
+                    SelectedApplicant = null;
+                    // Перезагружаем список кандидатов
+                    await LoadZaps();
                 }
             }
             catch (Exception e)
             {
-                MessageBox.Show("Database not save");
+                MessageBox.Show("Не удалось сохранить");
             }
         }
         private async Task LoadZaps()
         {
+            // Обработка исключений
             try
             {
+                // Загружаем список кандидатов из базы данных
                 var zaps = await context.Zaps.ToListAsync();
+                // Преобразуем список кандидатов в запросы
                 Zaps = zaps.Select(MapZap).AsQueryable();
+                // Создание списка отфильтрованных кандидатов
                 FilteredApplicants = new ObservableCollection<Zap>(Zaps);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Error loading zaps", ex);
+                throw new InvalidOperationException("Ошибкка загрузки zaps", ex);
             }
         }
-
+        private async Task LoadYeszaps()
+        {
+            // Обработка исключений
+            try
+            {
+                // Загружаем список зачисленных кандидатов из базы данных
+                var yeszaps = await context.Yeszaps.ToListAsync();
+                // Преобразуем список зачисленных кандидатов в запросы
+                Yeszaps = yeszaps.AsQueryable();
+                // Создаем список зачисленных кандидатов
+                Yeszap = new ObservableCollection<Yeszap>(Yeszaps);
+                // Обновляем уведомление о изменении свойства
+                OnPropertyChanged(nameof(Yeszap));
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Ошибка загрузки yeszaps", ex);
+            }
+        }
         public string SearchText
         {
             get => searchText;
@@ -239,12 +282,14 @@ namespace CollegeAdmissionAutomation
         }
         private void FilterZapsByName(string searchText)
         {
+            // Если текст поиска пуст, то показываем весь список кандидатов
             if (string.IsNullOrEmpty(searchText))
             {
                 FilteredApplicants = new ObservableCollection<Zap>(Zaps);
             }
             else
             {
+                // Фильтруем список кандидатов по имени или специальности
                 FilteredApplicants = new ObservableCollection<Zap>(Zaps.Where(z => z.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) || z.Spec.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
             }
         }
@@ -262,6 +307,7 @@ namespace CollegeAdmissionAutomation
 
         private void OnOpenTheBlessedOnes(object _)
         {
+            // Создаем новое окно "Зачисленные" и показываем его
             var theBlessedOnes = new TheBlessedOnes(Yeszap);
             theBlessedOnes.Show();
         }
@@ -302,4 +348,3 @@ namespace CollegeAdmissionAutomation
         }
     }
 }
-
