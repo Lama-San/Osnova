@@ -40,15 +40,15 @@ public partial class Dayn1Context : DbContext
 
             entity.ToTable("login");
 
-            entity.HasIndex(e => e.RoleId, "FK_login_role_Id");
+            entity.HasIndex(e => e.PassportNumber, "FK_login_role_Id");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnType("int(11)");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.FirstName).HasMaxLength(255);
+            entity.Property(e => e.PassportNumber).HasColumnName("passportNumber");
             entity.Property(e => e.Password).HasMaxLength(255);
-            entity.Property(e => e.RoleId).HasColumnType("int(11)");
         });
 
         modelBuilder.Entity<Nozap>(entity =>

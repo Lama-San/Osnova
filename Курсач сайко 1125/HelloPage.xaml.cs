@@ -32,8 +32,8 @@ namespace Курсач_сайко_1125
         private void Dn_click (object sender, RoutedEventArgs e)
         {
 
-            Dn_Registred dn_Registred = new Dn_Registred();
-            dn_Registred.Show();
+            To_Lk to_Lk = new To_Lk();
+            to_Lk.Show();
         }
     }
 }

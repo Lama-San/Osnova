@@ -1,0 +1,30 @@
+﻿<Window x:Class="Курсач_сайко_1125.To_Lk_Registred"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Курсач_сайко_1125"
+        mc:Ignorable="d"
+        Title="Регистрация" Height="300" Width="300" Background="#FFB2F3FF">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="Имя:" Margin="5" Foreground="White"/>
+        <TextBox x:Name="txtUsername" Grid.Row="0" Grid.Column="1" Margin="5" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Номер паспорта:" Margin="5" Foreground="White"/>
+        <PasswordBox x:Name="PassportNumber" Grid.Row="1" Grid.Column="1" Margin="5"/>
+        <Button Content="Зарегистрируйтесь" Click="btnRegister" Background="White" Margin="28,8,38,-23" Grid.Column="1" Grid.Row="4"/>
+    </Grid>
+</Window>
