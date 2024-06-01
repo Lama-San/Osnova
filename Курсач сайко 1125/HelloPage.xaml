@@ -5,22 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Курсач_сайко_1125"
         mc:Ignorable="d"
-        Title=":)" Height="509" Width="332">
+        Title=":)" Height="638" Width="1078">
     <Grid Margin="0,10,0,-6">
         <Grid.Background>
             <ImageBrush ImageSource="/Adam1.png"/>
         </Grid.Background>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="101*"/>
             <ColumnDefinition Width="107*"/>
 
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Margin="29,0,0,0"/>
-        <Button Content="Я преподаватель" Margin="10,382,10,47" Click="Prepod_click">
-           
+        <Button Content="Я преподаватель" Margin="128,454,127,103" Click="Prepod_click">
+            <Button.Background>
+                <ImageBrush ImageSource="/ад.jpg"/>
+            </Button.Background>
+
         </Button>
-        <Button Content="Я абитуриент" Click="Dn_click" Margin="10,382,14,47" Grid.Column="1">
-            
+        <Button Content="Я абитуриент" Click="Dn_click" Margin="117,454,170,103" Grid.Column="1">
+            <Button.Background>
+                <ImageBrush ImageSource="/страдания.jpeg"/>
+            </Button.Background>
         </Button>
 
     </Grid>

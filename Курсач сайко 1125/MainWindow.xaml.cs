@@ -115,9 +115,11 @@ namespace CollegeAdmissionAutomation
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand EnrollCommand { get; private set; } // Команда для зачисления
         public ICommand RemoveCommand { get; private set; } // Команда для удаления
+        public ICommand NotTodayCommand { get; private set; } // Команда для переноса в Nozap
         public IQueryable<Zap> Zaps { get; private set; } // Запросы к таблице Zap
         public IQueryable<Yeszap> Yeszaps { get; private set; } // Запросы к таблице Yeszap
         public ICommand OpenTheBlessedOnesCommand { get; private set; } // Команда для открытия окна "Зачисленные"
+        public ICommand OpenLosersCommand { get; private set; } // Команда для открытия окна "Неудачники"
 
         private Zap? selectedApplicant; // Выбранный кандидат
         private ObservableCollection<Zap> filteredApplicants; // Отфильтрованные кандидаты
@@ -157,9 +159,10 @@ namespace CollegeAdmissionAutomation
             LoadZaps(); // Загружаем список кандидатов
             LoadYeszaps(); // Загружаем список зачисленных
             Yeszap = new ObservableCollection<Yeszap>();
+            OpenLosersCommand = new RelayCommand(OnOpenLosers, _ => true);// Создаем команду для открытия окна "Неудачники"
             OpenTheBlessedOnesCommand = new RelayCommand(OnOpenTheBlessedOnes, _ => true); // Создаем команду для открытия окна "Зачисленные"
             EnrollCommand = new RelayCommand(param => EnrollApplicant(), _ => SelectedApplicant != null); // Создаем команду для зачисления
-            RemoveCommand = new RelayCommand(param => RemoveApplicant(), canExecute: _ => SelectedApplicant != null); // Создаем команду для удаления
+            NotTodayCommand = new RelayCommand(param => NotToday(), canExecute: _ => SelectedApplicant != null); // Создаем команду для переноса в Nozap
         }
         private async void EnrollApplicant()
         {
@@ -170,7 +173,7 @@ namespace CollegeAdmissionAutomation
                 if (!string.IsNullOrEmpty(SelectedApplicant.Name))
                 {
                     // Создаем объект зачисленного кандидата
-                    var yeszap = new Yeszap
+                    var yeszap = new Yeszap 
                     {
                         Name = SelectedApplicant.Name,
                         Gpa = SelectedApplicant.Gpa,
@@ -188,7 +191,7 @@ namespace CollegeAdmissionAutomation
                         context.Zaps.Remove(zapToRemove);
                         await context.SaveChangesAsync();
                     }
-
+                    MessageBox.Show("Неужели у погасшей души будет шанс?");
                     // Сбрасываем выбранного кандидата
                     SelectedApplicant = null;
                     // Перезагружаем список кандидатов
@@ -204,34 +207,44 @@ namespace CollegeAdmissionAutomation
             }
         }
 
-        private async void RemoveApplicant()
+        private async void NotToday()
         {
-            // Обработка исключений
-            try
+            // Проверяем, выбран ли кандидат
+            if (SelectedApplicant != null)
             {
-                // Проверяем, выбран ли кандидат
-                if (SelectedApplicant != null)
+                // Проверяем, является ли выбранный параметр подходящим
+                if (!string.IsNullOrEmpty(SelectedApplicant.Name))
                 {
-                    // Находим кандидата в контексте по его ID
-                    var zapToRemove = context.Zaps.Find(SelectedApplicant.Id);
-                    // Проверяем, найден ли кандидат
+                    // Создаем объект незачисленного кандидата
+                    var nozap = new Nozap
+                    {
+                        Name = SelectedApplicant.Name,
+                        Gpa = SelectedApplicant.Gpa,
+                        Spec = SelectedApplicant.Spec
+                    };
+
+                    // Добавляем объект в контекст и сохраняем изменения в базе данных
+                    context.Nozaps.Add(nozap);
+                    await context.SaveChangesAsync();
+
+                    // После сохранения удаляем кандидата из списка кандидатов
+                    var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
                     if (zapToRemove != null)
                     {
-                        // Удаляем кандидата из контекста
                         context.Zaps.Remove(zapToRemove);
-                        // Сохраняем изменения в базе данных
                         await context.SaveChangesAsync();
                     }
-
+                    MessageBox.Show("За что вы так с ним, он хотел жить...");
                     // Сбрасываем выбранного кандидата
                     SelectedApplicant = null;
                     // Перезагружаем список кандидатов
                     await LoadZaps();
                 }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Не удалось сохранить");
+                else
+                {
+                    // Выводит сообщение об ошибке, если введено неверное имя
+                    MessageBox.Show("Пожалуйста, выберите действительного кандидата.");
+                }
             }
         }
         private async Task LoadZaps()
@@ -304,7 +317,13 @@ namespace CollegeAdmissionAutomation
                 Spec = zap.Spec
             };
         }
-
+        private void OnOpenLosers(object _)
+        {
+            // Здесь загружаются данные из Nozap и передаете их в окно Losers.
+            var nozaps = context.Nozaps.ToList();
+            var losers = new Losers(new ObservableCollection<Nozap>(nozaps));
+            losers.Show();
+        }
         private void OnOpenTheBlessedOnes(object _)
         {
             // Создаем новое окно "Зачисленные" и показываем его

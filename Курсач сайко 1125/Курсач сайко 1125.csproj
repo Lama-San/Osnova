@@ -12,6 +12,9 @@
 
   <ItemGroup>
     <None Remove="1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg" />
+    <None Remove="Adam1.png" />
+    <None Remove="ад.jpg" />
+    <None Remove="страдания.jpeg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +32,9 @@
 
   <ItemGroup>
     <Resource Include="1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg" />
+    <Resource Include="Adam1.png" />
+    <Resource Include="ад.jpg" />
+    <Resource Include="страдания.jpeg" />
   </ItemGroup>
 
 </Project>

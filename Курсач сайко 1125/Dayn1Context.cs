@@ -18,6 +18,8 @@ public partial class Dayn1Context : DbContext
 
     public virtual DbSet<Login> Logins { get; set; }
 
+    public virtual DbSet<Nozap> Nozaps { get; set; }
+
     public virtual DbSet<Yeszap> Yeszaps { get; set; }
 
     public virtual DbSet<Zap> Zaps { get; set; }
@@ -47,6 +49,18 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.FirstName).HasMaxLength(255);
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasColumnType("int(11)");
+        });
+
+        modelBuilder.Entity<Nozap>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("nozap");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Gpa).HasPrecision(3, 2);
+            entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.Spec).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Yeszap>(entity =>
