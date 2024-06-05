@@ -5,34 +5,40 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using static CollegeAdmissionAutomation.Lk;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static CollegeAdmissionAutomation.LkWindow;
 
 namespace Курсач_сайко_1125
 {
-    public partial class To_Lk : MainWindow, INotifyPropertyChanged
+    public partial class To_Lk : Window, INotifyPropertyChanged
     {
         private string errorMessage;
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        // Data binding properties
         public string Login { get; set; }
         public string PassportNumber { get; set; }
-        void Signal([CallerMemberName] string prop = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
         public To_Lk()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(new Dayn1Context());
+            // DataContext = new MainViewModel(new Dayn1Context()); // Initialize your view model if needed
+            DataContext = this; // Set the DataContext to the current window
         }
 
-        public string ErrorMesage
+        // Error message property for data binding
+        public string ErrorMessage
         {
             get => errorMessage;
             set
             {
                 errorMessage = value;
-                Signal();
+                Signal(nameof(ErrorMessage)); // Notify UI of changes
             }
         }
+
+        // Helper function to notify property changes
+        void Signal([CallerMemberName] string prop = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
         private void CheckAuth(string login, string pass)
         {
@@ -40,13 +46,13 @@ namespace Курсач_сайко_1125
             if (user != null)
             {
                 int passportNumber = int.Parse(user.PassportNumber);
-                Lk lk = new Lk(passportNumber, user.FirstName);
-                new LkWindow(lk).Show(); // Create and show the new window
-                Close();
+                LkWindow lkWindow = new LkWindow(passportNumber, user.FirstName);
+                lkWindow.Show();
+                this.Close();
             }
             else
             {
-                ErrorMesage = "Неправильный паспорт или имя!";
+                ErrorMessage = "Неправильный паспорт или имя!";
             }
         }
 
@@ -62,4 +68,3 @@ namespace Курсач_сайко_1125
         }
     }
 }
-

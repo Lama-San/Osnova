@@ -19,17 +19,18 @@ using Курсач_сайко_1125;
 
 namespace CollegeAdmissionAutomation
 {
-    public class Lk : INotifyPropertyChanged
+    public partial class LkWindow : Window
     {
-        private string name;
-        public partial class LkWindow : Window
+        public LkWindow(int passportNumber, string name)
         {
-            public LkWindow(Lk lk)
-            {
-                InitializeComponent();
-                DataContext = lk;
-            }
+            InitializeComponent();
+            DataContext = this;
+            Name = name;
+            Gpa = 3.5m; // example value
+            Spec = "Computer Science"; // example value
         }
+
+        private string name;
         public string Name
         {
             get => name;
@@ -73,16 +74,7 @@ namespace CollegeAdmissionAutomation
             }
         }
 
-        public Lk(int passportNumber, string name)
-        {
-            // Load data from database based on passport number and name
-            // ...
-            // Update properties with loaded data
-            Name = name;
-            Gpa = 3.5m; // example value
-            Spec = "Computer Science"; // example value
-            //Status = GetStatus(passportNumber, name);
-        }
+       
 
         //private string GetStatus(int passportNumber, string name)
         //{
