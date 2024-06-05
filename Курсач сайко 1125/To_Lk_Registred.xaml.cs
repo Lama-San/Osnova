@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BD;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -8,9 +9,16 @@ namespace Курсач_сайко_1125
 {
     public partial class To_Lk_Registred : Window, INotifyPropertyChanged
     {
-        private Login login;
+        private LoginSt login;
+        public int Id { get; set; }
 
-        public string FirstName { get; set; }
+        public string StudentName { get; set; }
+
+        public string StudentPassword { get; set; }
+
+        public string StudentEmail { get; set; }
+
+        public string PassportNumber { get; set; }
 
         private string errorMessage;
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -34,23 +42,26 @@ namespace Курсач_сайко_1125
 
         private void Check_Register(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(textBoxPassport.Text) || string.IsNullOrEmpty(passwordBox.Password))
+            if (string.IsNullOrEmpty(txtStudentName.Text) || string.IsNullOrEmpty(passwordBox.Password) || string.IsNullOrEmpty(emailBox.Text) || string.IsNullOrEmpty(textBoxPassport.Text))
             {
                 ErrorMessage = "Обязательные поля не заполнены";
                 return;
             }
             else
             {
-                login = new Login
+                login = new LoginSt
                 {
-                    FirstName = txtUsername.Text,                 
-                    Password = passwordBox.Password, // получаем значение из passwordBox
+                    StudentName = txtStudentName.Text,
+                    StudentPassword = passwordBox.Password,
+                    StudentEmail = emailBox.Text,
                     PassportNumber = textBoxPassport.Text
                 };
 
                 using (var context = new Dayn1Context())
                 {
-                    context.Logins.Add(login);
+                    Id = context.LoginSts.Any() ? context.LoginSts.Max(l => l.Id) + 1 : 1;
+                    login.Id = Id;
+                    context.LoginSts.Add(login);
                     context.SaveChanges();
                 }
 

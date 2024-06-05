@@ -18,6 +18,8 @@ public partial class Dayn1Context : DbContext
 
     public virtual DbSet<Login> Logins { get; set; }
 
+    public virtual DbSet<LoginSt> LoginSts { get; set; }
+
     public virtual DbSet<Nozap> Nozaps { get; set; }
 
     public virtual DbSet<Yeszap> Yeszaps { get; set; }
@@ -51,6 +53,25 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.Password).HasMaxLength(255);
         });
 
+        modelBuilder.Entity<LoginSt>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("login_st");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnType("int(11)");
+            entity.Property(e => e.PassportNumber)
+                .HasMaxLength(255)
+                .HasColumnName("passportNumber");
+            entity.Property(e => e.StudentEmail).HasMaxLength(255);
+            entity.Property(e => e.StudentGpa).HasMaxLength(255);
+            entity.Property(e => e.StudentName).HasMaxLength(255);
+            entity.Property(e => e.StudentPassword).HasMaxLength(255);
+            entity.Property(e => e.StudentSpec).HasMaxLength(255);
+        });
+
         modelBuilder.Entity<Nozap>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -60,6 +81,9 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Gpa).HasPrecision(3, 2);
             entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.PassportNumber)
+                .HasMaxLength(255)
+                .HasColumnName("passportNumber");
             entity.Property(e => e.Spec).HasMaxLength(255);
         });
 
@@ -72,6 +96,9 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Gpa).HasPrecision(3, 2);
             entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.PassportNumber)
+                .HasMaxLength(255)
+                .HasColumnName("passportNumber");
             entity.Property(e => e.Spec).HasMaxLength(255);
         });
 
@@ -84,6 +111,9 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Gpa).HasPrecision(3, 2);
             entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.PassportNumber)
+                .HasMaxLength(255)
+                .HasColumnName("passportNumber");
             entity.Property(e => e.Spec).HasMaxLength(255);
         });
 

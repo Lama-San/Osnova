@@ -1,18 +1,56 @@
-﻿using CollegeAdmissionAutomation;
-using MySqlConnector;
+﻿using MySqlConnector;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Курсач_сайко_1125
 {
-    public partial class Dn_Registred : Window
+    public partial class Dn_Registred : Window, INotifyPropertyChanged
     {
         private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
-        public string Name { get; set; }
-        public string Gpa { get; set; }
-        public string SelectedSpec { get; set; } // Bind this to the SelectedItem of your ComboBox
+
+        private string _name;
+        private string _gpa;
+        private string _selectedSpec;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Gpa
+        {
+            get => _gpa;
+            set
+            {
+                _gpa = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SelectedSpec
+        {
+            get => _selectedSpec;
+            set
+            {
+                _selectedSpec = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public Dn_Registred()
         {
@@ -22,20 +60,17 @@ namespace Курсач_сайко_1125
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(this.Name) || string.IsNullOrEmpty(this.Gpa))
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Gpa))
             {
                 MessageBox.Show("Обязательные поля не заполнены!");
                 return;
             }
 
-            string name = this.Name;
-            if (!decimal.TryParse(this.Gpa, out decimal gpa))
+            if (!decimal.TryParse(Gpa, out decimal gpa))
             {
                 MessageBox.Show("Некорректное значение Среднего балла");
                 return;
             }
-
-            string spec = this.SelectedSpec;
 
             try
             {
@@ -47,7 +82,7 @@ namespace Курсач_сайко_1125
                     string countQuery = "SELECT COUNT(*) FROM zap WHERE Spec = @spec";
                     using (MySqlCommand countCommand = new MySqlCommand(countQuery, connection))
                     {
-                        countCommand.Parameters.AddWithValue("@spec", spec);
+                        countCommand.Parameters.AddWithValue("@spec", SelectedSpec);
                         int count = Convert.ToInt32(countCommand.ExecuteScalar());
 
                         if (count >= MaxGroupSize)
@@ -61,9 +96,9 @@ namespace Курсач_сайко_1125
                     string query = "INSERT INTO zap (Name, Gpa, Spec) VALUES (@name, @gpa, @spec)";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@name", name);
+                        command.Parameters.AddWithValue("@name", Name);
                         command.Parameters.AddWithValue("@gpa", gpa);
-                        command.Parameters.AddWithValue("@spec", spec);
+                        command.Parameters.AddWithValue("@spec", SelectedSpec);
                         command.ExecuteNonQuery();
                     }
                 }

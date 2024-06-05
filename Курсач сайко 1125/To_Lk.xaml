@@ -11,17 +11,14 @@
             <ImageBrush ImageSource="/1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg"/>
         </Grid.Background>
 
-
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Height="292" Margin="0,103,0,0">
             <Label Content="{Binding ErrorMessage}" FontSize="15" Foreground="Red"/>
             <Label MinWidth="200" Content="Паспорт" HorizontalContentAlignment="Center" Padding="5" Margin="5" />
-            <TextBox Text="{Binding Login}" Padding="5" Margin="5"  Background="AliceBlue" />
-            <Label Content="Имя" HorizontalContentAlignment="Center" Padding="5" Margin="5"/>
+            <TextBox Text="{Binding PassportNumber}" Padding="5" Margin="5"  Background="AliceBlue" />
+            <Label Content="Пароль" HorizontalContentAlignment="Center" Padding="5" Margin="5"/>
             <PasswordBox x:Name="passwordBox" Padding="5" Margin="5" Background="AliceBlue"/>
             <Button Content="Войти" Click="LoginButton" Background="AliceBlue"/>
-            <Button Content="Зарегистрируйтесь" Click="RegisterButton" Background="AliceBlue" Height="23"/>
-            
+            <Button Content="Зарегистрироваться" Click="RegisterButton" Background="AliceBlue" Height="23"/>
         </StackPanel>
-
     </Grid>
 </Window>

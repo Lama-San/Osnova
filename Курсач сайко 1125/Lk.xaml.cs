@@ -25,13 +25,26 @@ namespace CollegeAdmissionAutomation
         {
             InitializeComponent();
             DataContext = this;
-            Name = name;
-            Gpa = 3.5m; // example value
-            Spec = "Computer Science"; // example value
+            LoadData(passportNumber, name);
         }
 
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Dn_Registred dn_Registred = new Dn_Registred();
+            dn_Registred.Show();
+        }
+        //private void Dn_Registred_Closed(object sender, EventArgs e)
+        //{
+        //    Dn_Registred dn_Registred = (Dn_Registred)sender;
+        //    if (dn_Registred.DialogResult == true)
+        //    {
+        //        StudentGpa = dn_Registred.Gpa;
+        //        StudentSpec = dn_Registred.SelectedSpec;
+        //    }
+        //}
+
         private string name;
-        public string Name
+        public string StudentName
         {
             get => name;
             set
@@ -42,24 +55,24 @@ namespace CollegeAdmissionAutomation
         }
 
         private decimal gpa;
-        public decimal Gpa
+        public decimal StudentGpa
         {
             get => gpa;
             set
             {
                 gpa = value;
-                OnPropertyChanged(nameof(Gpa));
+                OnPropertyChanged(nameof(StudentGpa));
             }
         }
 
         private string spec;
-        public string Spec
+        public string StudentSpec
         {
             get => spec;
             set
             {
                 spec = value;
-                OnPropertyChanged(nameof(Spec));
+                OnPropertyChanged(nameof(StudentSpec));
             }
         }
 
@@ -74,40 +87,52 @@ namespace CollegeAdmissionAutomation
             }
         }
 
-       
+        private void LoadData(int passportNumber, string name)
+        {
+            using (var context = new Dayn1Context())
+            {
+                Status = GetStatus(passportNumber, name);
+                var applicant = context.LoginSts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
+                if (applicant != null)
+                {
+                    Name = applicant.StudentName;
+                    StudentGpa = decimal.TryParse(applicant.StudentGpa, out decimal parsedGpa) ? parsedGpa : 0M;
+                    StudentSpec = applicant.StudentSpec; // Assuming Specialization exists in LoginSt
+                }
+                else
+                {
+                    // Handle the case where the applicant does not exist in the database.
+                    // You could set default values or show an error message.
+                    Name = "Unknown";
+                    StudentGpa = 0;
+                    StudentSpec = "Unknown";
+                }
+            }
+        }
 
-        //private string GetStatus(int passportNumber, string name)
-        //{
-        //    // Check if the applicant is in Zap, Yeszap, or Nozap tables
-        //    // ...
-        //    // Return the corresponding status
-        //    // ...
-        //}
-        //private string GetStatus(int passportNumber, string name)
-        //{
-        //    using (var context = new Dayn1Context())
-        //    {
-        //        var zap = context.Zaps.FirstOrDefault(z => z.PassportNumber == passportNumber && z.Name == name);
-        //        if (zap != null)
-        //        {
-        //            return "На рассмотрении";
-        //        }
+        private string GetStatus(int passportNumber, string name)
+        {
+            using (var context = new Dayn1Context())
+            {
+                if (context.Zaps.Any(z => z.PassportNumber == passportNumber.ToString() && z.Name == name))
+                {
+                    return "На рассмотрении";
+                }
+                else if (context.Yeszaps.Any(y => y.PassportNumber == passportNumber.ToString() && y.Name == name))
+                {
+                    return "Зачислен";
+                }
+                else if (context.Nozaps.Any(n => n.PassportNumber == passportNumber.ToString() && n.Name == name))
+                {
+                    return "Не зачислен";
+                }
+                else
+                {
+                    return "Неизвестно";
+                }
+            }
+        }
 
-        //        var yeszap = context.Yeszaps.FirstOrDefault(y => y.PassportNumber == passportNumber && y.Name == name);
-        //        if (yeszap != null)
-        //        {
-        //            return "Зачислен";
-        //        }
-
-        //        var nozap = context.Nozaps.FirstOrDefault(n => n.PassportNumber == passportNumber && n.Name == name);
-        //        if (nozap != null)
-        //        {
-        //            return "Не зачислен";
-        //        }
-
-        //        return "Unknown";
-        //    }
-        //}
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

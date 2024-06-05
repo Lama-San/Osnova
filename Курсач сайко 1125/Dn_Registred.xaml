@@ -23,13 +23,13 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Имя:" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
-        <TextBox Grid.Column="1" Name="txtName" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" x:Name="txtName" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Row="1" Text="Средний балл:" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Gpa, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center" Foreground="White"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="myComboBox" Margin="5,0,0,0" SelectedItem="{Binding Path=SelectedSpec, Mode=TwoWay}">
+        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="myComboBox" Margin="5,0,0,0" SelectedItem="{Binding SelectedSpec, Mode=TwoWay}">
             <ComboBox.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="#FFF0F0F0"/>

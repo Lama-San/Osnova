@@ -15,13 +15,11 @@ namespace Курсач_сайко_1125
         public event PropertyChangedEventHandler? PropertyChanged;
 
         // Data binding properties
-        public string Login { get; set; }
         public string PassportNumber { get; set; }
-
+        public string StudentPassword { get; set; }
         public To_Lk()
         {
             InitializeComponent();
-            // DataContext = new MainViewModel(new Dayn1Context()); // Initialize your view model if needed
             DataContext = this; // Set the DataContext to the current window
         }
 
@@ -40,25 +38,25 @@ namespace Курсач_сайко_1125
         void Signal([CallerMemberName] string prop = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
-        private void CheckAuth(string login, string pass)
+        private void CheckAuth(string pass, string psw)
         {
-            var user = DB.Instance.Logins.FirstOrDefault(s => s.FirstName == login && s.PassportNumber == pass);
+            var user = DB.Instance.LoginSts.FirstOrDefault(s => s.PassportNumber == pass && s.StudentPassword == psw);
             if (user != null)
             {
                 int passportNumber = int.Parse(user.PassportNumber);
-                LkWindow lkWindow = new LkWindow(passportNumber, user.FirstName);
+                LkWindow lkWindow = new LkWindow(passportNumber, user.StudentName);
                 lkWindow.Show();
                 this.Close();
             }
             else
             {
-                ErrorMessage = "Неправильный паспорт или имя!";
+                ErrorMessage = "Неправильный паспорт или пароль!";
             }
         }
 
         private void LoginButton(object sender, RoutedEventArgs e)
         {
-            CheckAuth(Login, PassportNumber);
+            CheckAuth(PassportNumber, passwordBox.Password);
         }
 
         private void RegisterButton(object sender, RoutedEventArgs e)
