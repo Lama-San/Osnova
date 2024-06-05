@@ -1,27 +1,15 @@
-﻿using BD;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 namespace Курсач_сайко_1125
 {
-    public partial class To_Lk_Registred : Window
+    public partial class To_Lk_Registred : Window, INotifyPropertyChanged
     {
         private Login login;
 
-        //public string PassportNumber { get; set; }
         public string FirstName { get; set; }
 
         private string errorMessage;
@@ -46,20 +34,20 @@ namespace Курсач_сайко_1125
 
         private void Check_Register(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(textBoxPasspotr.Text))
+            if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(textBoxPassport.Text) || string.IsNullOrEmpty(passwordBox.Password))
             {
                 ErrorMessage = "Обязательные поля не заполнены";
                 return;
             }
             else
             {
-                var login = new Login
+                login = new Login
                 {
-                    FirstName = txtUsername.Text,
-                    PassportNumber = textBoxPasspotr.Text, // получаем значение из textBoxPasspotr
+                    FirstName = txtUsername.Text,                 
+                    Password = passwordBox.Password, // получаем значение из passwordBox
+                    PassportNumber = textBoxPassport.Text
                 };
 
-               
                 using (var context = new Dayn1Context())
                 {
                     context.Logins.Add(login);

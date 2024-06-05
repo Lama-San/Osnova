@@ -5,36 +5,6 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Курсач сайко 1125", "Курсач сайко 1125\Курсач сайко 1125.csproj", "{882560CF-3A7A-488A-A519-D4CADFB40770}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "search", "search", "{DBE86AA1-B422-414A-819C-774A68E1AA8B}"
-	ProjectSection(SolutionItems) = preProject
-		Курсач сайко 1125\searchTextBox.cs = Курсач сайко 1125\searchTextBox.cs
-		Курсач сайко 1125\textBoxPassword.cs = Курсач сайко 1125\textBoxPassword.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "View", "View", "{030E4B59-D30C-498D-AB0B-809EA6136530}"
-	ProjectSection(SolutionItems) = preProject
-		Курсач сайко 1125\Dn_Registred.xaml = Курсач сайко 1125\Dn_Registred.xaml
-		Курсач сайко 1125\Dn_Registred.xaml.cs = Курсач сайко 1125\Dn_Registred.xaml.cs
-		Курсач сайко 1125\HelloPage.xaml = Курсач сайко 1125\HelloPage.xaml
-		Курсач сайко 1125\HelloPage.xaml.cs = Курсач сайко 1125\HelloPage.xaml.cs
-		Курсач сайко 1125\LogIn.xaml = Курсач сайко 1125\LogIn.xaml
-		Курсач сайко 1125\LogIn.xaml.cs = Курсач сайко 1125\LogIn.xaml.cs
-		Курсач сайко 1125\MainWindow.xaml = Курсач сайко 1125\MainWindow.xaml
-		Курсач сайко 1125\MainWindow.xaml.cs = Курсач сайко 1125\MainWindow.xaml.cs
-		Курсач сайко 1125\Registred.xaml = Курсач сайко 1125\Registred.xaml
-		Курсач сайко 1125\Registred.xaml.cs = Курсач сайко 1125\Registred.xaml.cs
-		Курсач сайко 1125\TheBlessedOnes.xaml = Курсач сайко 1125\TheBlessedOnes.xaml
-		Курсач сайко 1125\TheBlessedOnes.xaml.cs = Курсач сайко 1125\TheBlessedOnes.xaml.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BD", "BD", "{903604A9-B572-43D4-A01E-4096F1074518}"
-	ProjectSection(SolutionItems) = preProject
-		Курсач сайко 1125\BD.cs = Курсач сайко 1125\BD.cs
-		Курсач сайко 1125\Dayn1Context.cs = Курсач сайко 1125\Dayn1Context.cs
-		Курсач сайко 1125\Yeszap.cs = Курсач сайко 1125\Yeszap.cs
-		Курсач сайко 1125\Zap.cs = Курсач сайко 1125\Zap.cs
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

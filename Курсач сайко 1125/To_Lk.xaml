@@ -20,6 +20,7 @@
             <PasswordBox x:Name="passwordBox" Padding="5" Margin="5" Background="AliceBlue"/>
             <Button Content="Войти" Click="LoginButton" Background="AliceBlue"/>
             <Button Content="Зарегистрируйтесь" Click="RegisterButton" Background="AliceBlue" Height="23"/>
+            
         </StackPanel>
 
     </Grid>

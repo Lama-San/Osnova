@@ -24,7 +24,9 @@
         <Label Grid.Row="0" Grid.Column="0" Content="Имя:" Margin="5" Foreground="White"/>
         <TextBox x:Name="txtUsername" Grid.Row="0" Grid.Column="1" Margin="5" />
         <Label Grid.Row="1" Grid.Column="0" Content="Номер паспорта:" Margin="5" Foreground="White"/>
-        <PasswordBox x:Name="PassportNumber" Grid.Row="1" Grid.Column="1" Margin="5"/>
+        <TextBox x:Name="textBoxPassport" Grid.Row="1" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="Пароль:" Margin="5" Foreground="White"/>
+        <PasswordBox x:Name="passwordBox" Grid.Row="2" Grid.Column="1" Margin="5"/>
         <Button Content="Зарегистрируйтесь" Click="btnRegister" Background="White" Margin="28,8,38,-23" Grid.Column="1" Grid.Row="4"/>
     </Grid>
 </Window>

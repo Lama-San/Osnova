@@ -22,6 +22,14 @@ namespace CollegeAdmissionAutomation
     public class Lk : INotifyPropertyChanged
     {
         private string name;
+        public partial class LkWindow : Window
+        {
+            public LkWindow(Lk lk)
+            {
+                InitializeComponent();
+                DataContext = lk;
+            }
+        }
         public string Name
         {
             get => name;

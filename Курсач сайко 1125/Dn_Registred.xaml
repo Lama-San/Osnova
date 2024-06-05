@@ -29,7 +29,7 @@
         <TextBox Grid.Row="1" Grid.Column="1" Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Path=AverageScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center" Foreground="White"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="cboSpec" Margin="5,0,0,0" SelectedItem="{Binding Path=Specialty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="myComboBox" Margin="5,0,0,0" SelectedItem="{Binding Path=SelectedSpec, Mode=TwoWay}">
             <ComboBox.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="#FFF0F0F0"/>

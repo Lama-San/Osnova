@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using CollegeAdmissionAutomation;
+using MySqlConnector;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,32 +10,32 @@ namespace Курсач_сайко_1125
     {
         private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
+        public string Name { get; set; }
+        public string Gpa { get; set; }
+        public string SelectedSpec { get; set; } // Bind this to the SelectedItem of your ComboBox
 
         public Dn_Registred()
         {
             InitializeComponent();
+            this.DataContext = this;
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtGpa.Text))
+            if (string.IsNullOrEmpty(this.Name) || string.IsNullOrEmpty(this.Gpa))
             {
                 MessageBox.Show("Обязательные поля не заполнены!");
                 return;
             }
 
-            string name = txtName.Text;
-            if (!decimal.TryParse(txtGpa.Text, out decimal gpa))
+            string name = this.Name;
+            if (!decimal.TryParse(this.Gpa, out decimal gpa))
             {
                 MessageBox.Show("Некорректное значение Среднего балла");
                 return;
             }
 
-            string spec = "";
-            if (cboSpec.SelectedItem is ComboBoxItem item)
-            {
-                spec = item.Content.ToString();
-            }
+            string spec = this.SelectedSpec;
 
             try
             {
@@ -81,6 +82,3 @@ namespace Курсач_сайко_1125
         }
     }
 }
-
-
-
