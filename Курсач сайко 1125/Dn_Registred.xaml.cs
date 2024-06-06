@@ -1,7 +1,19 @@
 ﻿using MySqlConnector;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace Курсач_сайко_1125
 {
@@ -10,10 +22,14 @@ namespace Курсач_сайко_1125
         private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
         private string PassportNumber;
-        public Dn_Registred(string passportNumber) // Измените конструктор
+
+        public delegate void StatusChangedHandler();
+        public static event StatusChangedHandler? StatusChanged;
+
+        public Dn_Registred(string passportNumber)
         {
             InitializeComponent();
-            PassportNumber = passportNumber; // Сохраните номер паспорта
+            PassportNumber = passportNumber;
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
@@ -64,7 +80,7 @@ namespace Курсач_сайко_1125
                         command.Parameters.AddWithValue("@name", name);
                         command.Parameters.AddWithValue("@gpa", gpa);
                         command.Parameters.AddWithValue("@spec", spec);
-                        command.Parameters.AddWithValue("@passportNumber", PassportNumber); // Передача номера паспорта
+                        command.Parameters.AddWithValue("@passportNumber", PassportNumber);
                         command.ExecuteNonQuery();
                     }
 
@@ -75,6 +91,9 @@ namespace Курсач_сайко_1125
                         updateStatusCommand.Parameters.AddWithValue("@passportNumber", PassportNumber);
                         updateStatusCommand.ExecuteNonQuery();
                     }
+
+                    // Вызов события StatusChanged
+                    StatusChanged?.Invoke();
                 }
 
                 MessageBox.Show("Удачи... она тебе пригодится там...");

@@ -10,8 +10,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
@@ -26,16 +26,41 @@ namespace CollegeAdmissionAutomation
         {
             InitializeComponent();
             DataContext = this;
-            LoadData(passportNumber, name);
-            PassportNumber = passportNumber.ToString(); // Сохранить номер паспорта как строку для передачи в Dn_Registred
-        }
+            PassportNumber = passportNumber.ToString();
 
+            using (var context = new Dayn1Context())
+            {
+                var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
+                if (applicant != null)
+                {
+                    Name = applicant.StudentName;
+                    StudentGpa = decimal.TryParse(applicant.StudentGpa, out decimal parsedGpa) ? parsedGpa : 0M;
+                    StudentSpec = applicant.StudentSpec;
+                    Status = applicant.Status;
+                }
+                else
+                {
+                    Name = "Unknown";
+                    StudentGpa = 0;
+                    StudentSpec = "Unknown";
+                    Status = "Неизвестно";
+                }
+            }
+
+            // Подписываемся на событие StatusChanged из MainViewModel
+            if (Application.Current.MainWindow?.DataContext is MainViewModel mainViewModel)
+            {
+                mainViewModel.StatusChanged += () =>
+                {
+                    Dispatcher.Invoke(UpdateStatus);
+                };
+            }
+        }
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             var dn_Registred = new Dn_Registred(PassportNumber);
             dn_Registred.ShowDialog();
         }
-
         private string name;
         public string StudentName
         {
@@ -43,7 +68,7 @@ namespace CollegeAdmissionAutomation
             set
             {
                 name = value;
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
@@ -54,7 +79,7 @@ namespace CollegeAdmissionAutomation
             set
             {
                 gpa = value;
-                OnPropertyChanged(nameof(StudentGpa));
+                OnPropertyChanged();
             }
         }
 
@@ -65,7 +90,7 @@ namespace CollegeAdmissionAutomation
             set
             {
                 spec = value;
-                OnPropertyChanged(nameof(StudentSpec));
+                OnPropertyChanged();
             }
         }
 
@@ -75,53 +100,22 @@ namespace CollegeAdmissionAutomation
             get => status;
             set
             {
-                status = value;
-                OnPropertyChanged(nameof(Status));
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged(nameof(Status));
+                }
             }
         }
 
-        private void LoadData(int passportNumber, string name)
+        private void UpdateStatus()
         {
             using (var context = new Dayn1Context())
             {
-                Status = GetStatus(passportNumber, name);
-                var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
+                var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == PassportNumber);
                 if (applicant != null)
                 {
-                    Name = applicant.StudentName;
-                    StudentGpa = decimal.TryParse(applicant.StudentGpa, out decimal parsedGpa) ? parsedGpa : 0M;
-                    StudentSpec = applicant.StudentSpec; // Assuming Specialization exists in LoginSt
-                }
-                else
-                {
-                    // Handle the case where the applicant does not exist in the database.
-                    // You could set default values or show an error message.
-                    Name = "Unknown";
-                    StudentGpa = 0;
-                    StudentSpec = "Unknown";
-                }
-            }
-        }
-
-        private string GetStatus(int passportNumber, string name)
-        {
-            using (var context = new Dayn1Context())
-            {
-                if (context.Zaps.Any(z => z.PassportNumber == passportNumber.ToString() && z.Name == name))
-                {
-                    return "На рассмотрении";
-                }
-                else if (context.Yeszaps.Any(y => y.PassportNumber == passportNumber.ToString() && y.Name == name))
-                {
-                    return "Зачислен";
-                }
-                else if (context.Nozaps.Any(n => n.PassportNumber == passportNumber.ToString() && n.Name == name))
-                {
-                    return "Не зачислен";
-                }
-                else
-                {
-                    return "Неизвестно";
+                    Status = applicant.Status;
                 }
             }
         }

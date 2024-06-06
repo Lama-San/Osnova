@@ -111,7 +111,7 @@ namespace CollegeAdmissionAutomation
     {
         private Dayn1Context context;
         private string searchText = "";
-
+        public event Action StatusChanged;
         public event PropertyChangedEventHandler PropertyChanged;
         public ICommand EnrollCommand { get; private set; } // Команда для зачисления
         public ICommand RemoveCommand { get; private set; } // Команда для удаления
@@ -166,85 +166,93 @@ namespace CollegeAdmissionAutomation
         }
         private async void EnrollApplicant()
         {
-            // Проверяем, выбран ли кандидат
-            if (SelectedApplicant != null)
+            if (SelectedApplicant != null && !string.IsNullOrEmpty(SelectedApplicant.Name))
             {
-                // Проверяем, является ли выбранный параметр подходящим
-                if (!string.IsNullOrEmpty(SelectedApplicant.Name))
+                var loginstToUpdate = context.Loginsts.FirstOrDefault(l => l.StudentName == SelectedApplicant.Name);
+                if (loginstToUpdate != null)
                 {
-                    // Создаем объект зачисленного кандидата
-                    var yeszap = new Yeszap 
+                    loginstToUpdate.Status = "Зачислен";
+                    try
                     {
-                        Name = SelectedApplicant.Name,
-                        Gpa = SelectedApplicant.Gpa,
-                        Spec = SelectedApplicant.Spec
-                    };
-
-                    // Добавляем объект в контекст и сохраняем изменения в базе данных
-                    context.Yeszaps.Add(yeszap);
-                    await context.SaveChangesAsync();
-
-                    // После сохранения удаляем кандидата из списка кандидатов
-                    var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
-                    if (zapToRemove != null)
-                    {
-                        context.Zaps.Remove(zapToRemove);
                         await context.SaveChangesAsync();
+                        StatusChanged?.Invoke(); // Вызов события после успешного сохранения изменений
                     }
-                    MessageBox.Show("Неужели у погасшей души будет шанс?");
-                    // Сбрасываем выбранного кандидата
-                    SelectedApplicant = null;
-                    // Перезагружаем список кандидатов
-                    await LoadZaps();
-                    // Перезагружаем список зачисленных
-                    await LoadYeszaps();
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}");
+                    }
                 }
-                else
+
+                var yeszap = new Yeszap
                 {
-                    // Выводит сообщение об ошибке, если введено неверное имя
-                    MessageBox.Show("Пожалуйста, выберите действительного кандидата.");
+                    Name = SelectedApplicant.Name,
+                    Gpa = SelectedApplicant.Gpa,
+                    Spec = SelectedApplicant.Spec
+                };
+                context.Yeszaps.Add(yeszap);
+                await context.SaveChangesAsync();
+
+                var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
+                if (zapToRemove != null)
+                {
+                    context.Zaps.Remove(zapToRemove);
+                    await context.SaveChangesAsync();
                 }
+                StatusChanged?.Invoke();
+                MessageBox.Show("Неужели у погасшей души будет шанс?");
+                SelectedApplicant = null;
+                await LoadZaps();
+                await LoadYeszaps();
             }
         }
 
+
         private async void NotToday()
         {
-            // Проверяем, выбран ли кандидат
-            if (SelectedApplicant != null)
+            if (SelectedApplicant != null && !string.IsNullOrEmpty(SelectedApplicant.Name))
             {
-                // Проверяем, является ли выбранный параметр подходящим
-                if (!string.IsNullOrEmpty(SelectedApplicant.Name))
+                var loginstToUpdate = context.Loginsts.FirstOrDefault(l => l.StudentName == SelectedApplicant.Name);
+                if (loginstToUpdate != null)
                 {
-                    // Создаем объект незачисленного кандидата
-                    var nozap = new Nozap
+                    loginstToUpdate.Status = "Не принят";
+                    try
                     {
-                        Name = SelectedApplicant.Name,
-                        Gpa = SelectedApplicant.Gpa,
-                        Spec = SelectedApplicant.Spec
-                    };
-
-                    // Добавляем объект в контекст и сохраняем изменения в базе данных
-                    context.Nozaps.Add(nozap);
-                    await context.SaveChangesAsync();
-
-                    // После сохранения удаляем кандидата из списка кандидатов
-                    var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
-                    if (zapToRemove != null)
+                        await context.SaveChangesAsync();
+                        StatusChanged?.Invoke(); // Вызов события после успешного сохранения изменений
+                    }
+                    catch (Exception ex)
                     {
-                        context.Zaps.Remove(zapToRemove);
+                        MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}");
+                    }
+                }
+
+                var nozap = new Nozap
+                {
+                    Name = SelectedApplicant.Name,
+                    Gpa = SelectedApplicant.Gpa,
+                    Spec = SelectedApplicant.Spec
+                };
+                context.Nozaps.Add(nozap);
+                await context.SaveChangesAsync();
+
+                var zapToRemove = context.Zaps.FirstOrDefault(s => s.Id == SelectedApplicant.Id);
+                if (zapToRemove != null)
+                {
+                    context.Zaps.Remove(zapToRemove);
+                    try
+                    {
                         await context.SaveChangesAsync();
                     }
-                    MessageBox.Show("За что вы так с ним, он хотел жить...");
-                    // Сбрасываем выбранного кандидата
-                    SelectedApplicant = null;
-                    // Перезагружаем список кандидатов
-                    await LoadZaps();
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}");
+                    }
                 }
-                else
-                {
-                    // Выводит сообщение об ошибке, если введено неверное имя
-                    MessageBox.Show("Пожалуйста, выберите действительного кандидата.");
-                }
+
+                StatusChanged?.Invoke();
+                MessageBox.Show("За что вы так с ним, он хотел жить...");
+                SelectedApplicant = null;
+                await LoadZaps();
             }
         }
         private async Task LoadZaps()

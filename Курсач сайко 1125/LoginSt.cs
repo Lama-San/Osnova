@@ -18,4 +18,6 @@ public partial class Loginst
     public string? StudentGpa { get; set; }
 
     public string? StudentSpec { get; set; }
+
+    public string Status { get; set; } = null!;
 }

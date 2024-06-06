@@ -65,6 +65,7 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.PassportNumber)
                 .HasMaxLength(255)
                 .HasColumnName("passportNumber");
+            entity.Property(e => e.Status).HasMaxLength(255);
             entity.Property(e => e.StudentEmail).HasMaxLength(255);
             entity.Property(e => e.StudentGpa).HasMaxLength(255);
             entity.Property(e => e.StudentName).HasMaxLength(255);
@@ -85,6 +86,7 @@ public partial class Dayn1Context : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("passportNumber");
             entity.Property(e => e.Spec).HasMaxLength(255);
+            entity.Property(e => e.Status).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Yeszap>(entity =>
@@ -100,6 +102,7 @@ public partial class Dayn1Context : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("passportNumber");
             entity.Property(e => e.Spec).HasMaxLength(255);
+            entity.Property(e => e.Status).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Zap>(entity =>

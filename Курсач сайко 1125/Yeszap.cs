@@ -14,4 +14,6 @@ public partial class Yeszap
     public string Spec { get; set; } = null!;
 
     public string? PassportNumber { get; set; }
+
+    public string? Status { get; set; }
 }

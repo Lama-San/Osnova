@@ -54,7 +54,8 @@ namespace Курсач_сайко_1125
                     StudentName = txtStudentName.Text,
                     StudentPassword = passwordBox.Password,
                     StudentEmail = emailBox.Text,
-                    PassportNumber = textBoxPassport.Text
+                    PassportNumber = textBoxPassport.Text,
+                    Status = "Неизвестно"
                 };
 
                 using (var context = new Dayn1Context())
