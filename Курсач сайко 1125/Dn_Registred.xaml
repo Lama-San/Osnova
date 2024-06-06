@@ -29,13 +29,7 @@
         <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtGpa" Width="150" Margin="5,0,0,0" FontSize="14" Text="{Binding Gpa, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Row="2" Text="Специальность:" VerticalAlignment="Center" Foreground="White"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="myComboBox" Margin="5,0,0,0" SelectedItem="{Binding SelectedSpec, Mode=TwoWay}">
-            <ComboBox.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="#FFF0F0F0"/>
-                    <GradientStop Color="#FF34C2D4" Offset="1"/>
-                </LinearGradientBrush>
-            </ComboBox.Background>
+        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cmbSpeciality" Margin="5,0,0,0" SelectedValue="{Binding SelectedSpec, Mode=TwoWay}">
             <ComboBoxItem Content="ПрограМищь:)"/>
             <ComboBoxItem Content="Сварщик"/>
             <ComboBoxItem Content="Фрилансер(безработный)"/>

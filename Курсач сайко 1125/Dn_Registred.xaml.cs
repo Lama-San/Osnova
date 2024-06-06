@@ -8,56 +8,52 @@ namespace Курсач_сайко_1125
 {
     public partial class Dn_Registred : Window, INotifyPropertyChanged
     {
-        private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
+        private readonly string connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
 
-        private string _name;
-        private string _gpa;
-        private string _selectedSpec;
+        private string name;
+        private string gpa;
+        private string selectedSpec;
 
         public string Name
         {
-            get => _name;
+            get => name;
             set
             {
-                _name = value;
+                name = value;
                 OnPropertyChanged();
             }
         }
 
         public string Gpa
         {
-            get => _gpa;
+            get => gpa;
             set
             {
-                _gpa = value;
+                gpa = value;
                 OnPropertyChanged();
             }
         }
 
         public string SelectedSpec
         {
-            get => _selectedSpec;
+            get => selectedSpec;
             set
             {
-                _selectedSpec = value;
+                selectedSpec = value;
                 OnPropertyChanged();
             }
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
         public Dn_Registred()
         {
             InitializeComponent();
             this.DataContext = this;
         }
-
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Gpa))
@@ -74,11 +70,9 @@ namespace Курсач_сайко_1125
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(_connectionString))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    connection.Open();
-
-                    // Check if the group is full
+                    connection.Open();             
                     string countQuery = "SELECT COUNT(*) FROM zap WHERE Spec = @spec";
                     using (MySqlCommand countCommand = new MySqlCommand(countQuery, connection))
                     {
@@ -90,19 +84,16 @@ namespace Курсач_сайко_1125
                             MessageBox.Show("Извините, группа набрана");
                             return;
                         }
-                    }
-
-                    // Insert the new registration
+                    }                
                     string query = "INSERT INTO zap (Name, Gpa, Spec) VALUES (@name, @gpa, @spec)";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@name", Name);
-                        command.Parameters.AddWithValue("@gpa", gpa);
+                        command.Parameters.AddWithValue("@gpa", Gpa);
                         command.Parameters.AddWithValue("@spec", SelectedSpec);
                         command.ExecuteNonQuery();
                     }
                 }
-
                 MessageBox.Show("Удачи... она тебе пригодится там...");
                 Close();
             }
