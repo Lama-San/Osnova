@@ -33,16 +33,7 @@ namespace CollegeAdmissionAutomation
             Dn_Registred dn_Registred = new Dn_Registred();
             dn_Registred.Show();
         }
-        //private void Dn_Registred_Closed(object sender, EventArgs e)
-        //{
-        //    Dn_Registred dn_Registred = (Dn_Registred)sender;
-        //    if (dn_Registred.DialogResult == true)
-        //    {
-        //        StudentGpa = dn_Registred.Gpa;
-        //        StudentSpec = dn_Registred.SelectedSpec;
-        //    }
-        //}
-
+       
         private string name;
         public string StudentName
         {
@@ -101,8 +92,7 @@ namespace CollegeAdmissionAutomation
                 }
                 else
                 {
-                    // Handle the case where the applicant does not exist in the database.
-                    // You could set default values or show an error message.
+                   
                     Name = "Unknown";
                     StudentGpa = 0;
                     StudentSpec = "Unknown";
