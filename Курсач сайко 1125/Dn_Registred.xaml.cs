@@ -9,10 +9,11 @@ namespace Курсач_сайко_1125
     {
         private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
-
-        public Dn_Registred()
+        private string PassportNumber;
+        public Dn_Registred(string passportNumber) // Измените конструктор
         {
             InitializeComponent();
+            PassportNumber = passportNumber; // Сохраните номер паспорта
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
@@ -42,7 +43,7 @@ namespace Курсач_сайко_1125
                 {
                     connection.Open();
 
-                    // Check if the group is full
+                    // Проверка, не полна ли группа
                     string countQuery = "SELECT COUNT(*) FROM zap WHERE Spec = @spec";
                     using (MySqlCommand countCommand = new MySqlCommand(countQuery, connection))
                     {
@@ -56,14 +57,23 @@ namespace Курсач_сайко_1125
                         }
                     }
 
-                    // Insert the new registration
-                    string query = "INSERT INTO zap (Name, Gpa, Spec) VALUES (@name, @gpa, @spec)";
+                    // Вставка новой регистрации в таблицу zap
+                    string query = "INSERT INTO zap (Name, Gpa, Spec, PassportNumber) VALUES (@name, @gpa, @spec, @passportNumber)";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@name", name);
                         command.Parameters.AddWithValue("@gpa", gpa);
                         command.Parameters.AddWithValue("@spec", spec);
+                        command.Parameters.AddWithValue("@passportNumber", PassportNumber); // Передача номера паспорта
                         command.ExecuteNonQuery();
+                    }
+
+                    // Обновление статуса в таблице loginst
+                    string updateStatusQuery = "UPDATE loginst SET Status = 'На рассмотрении' WHERE PassportNumber = @passportNumber";
+                    using (MySqlCommand updateStatusCommand = new MySqlCommand(updateStatusQuery, connection))
+                    {
+                        updateStatusCommand.Parameters.AddWithValue("@passportNumber", PassportNumber);
+                        updateStatusCommand.ExecuteNonQuery();
                     }
                 }
 

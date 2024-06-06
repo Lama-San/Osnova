@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Курсач_сайко_1125;
 
-public partial class LoginSt
+public partial class Loginst
 {
     public int Id { get; set; }
 

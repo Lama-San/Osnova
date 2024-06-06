@@ -21,19 +21,21 @@ namespace CollegeAdmissionAutomation
 {
     public partial class LkWindow : Window
     {
+        private string PassportNumber;
         public LkWindow(int passportNumber, string name)
         {
             InitializeComponent();
             DataContext = this;
             LoadData(passportNumber, name);
+            PassportNumber = passportNumber.ToString(); // Сохранить номер паспорта как строку для передачи в Dn_Registred
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            Dn_Registred dn_Registred = new Dn_Registred();
-            dn_Registred.Show();
+            var dn_Registred = new Dn_Registred(PassportNumber);
+            dn_Registred.ShowDialog();
         }
-       
+
         private string name;
         public string StudentName
         {
@@ -83,7 +85,7 @@ namespace CollegeAdmissionAutomation
             using (var context = new Dayn1Context())
             {
                 Status = GetStatus(passportNumber, name);
-                var applicant = context.LoginSts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
+                var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
                 if (applicant != null)
                 {
                     Name = applicant.StudentName;
@@ -92,7 +94,8 @@ namespace CollegeAdmissionAutomation
                 }
                 else
                 {
-                   
+                    // Handle the case where the applicant does not exist in the database.
+                    // You could set default values or show an error message.
                     Name = "Unknown";
                     StudentGpa = 0;
                     StudentSpec = "Unknown";

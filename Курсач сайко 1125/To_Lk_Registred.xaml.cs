@@ -9,7 +9,7 @@ namespace Курсач_сайко_1125
 {
     public partial class To_Lk_Registred : Window, INotifyPropertyChanged
     {
-        private LoginSt login;
+        private Loginst login;
         public int Id { get; set; }
 
         public string StudentName { get; set; }
@@ -49,7 +49,7 @@ namespace Курсач_сайко_1125
             }
             else
             {
-                login = new LoginSt
+                login = new Loginst
                 {
                     StudentName = txtStudentName.Text,
                     StudentPassword = passwordBox.Password,
@@ -59,9 +59,9 @@ namespace Курсач_сайко_1125
 
                 using (var context = new Dayn1Context())
                 {
-                    Id = context.LoginSts.Any() ? context.LoginSts.Max(l => l.Id) + 1 : 1;
+                    Id = context.Loginsts.Any() ? context.Loginsts.Max(l => l.Id) + 1 : 1;
                     login.Id = Id;
-                    context.LoginSts.Add(login);
+                    context.Loginsts.Add(login);
                     context.SaveChanges();
                 }
 

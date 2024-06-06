@@ -18,7 +18,7 @@ public partial class Dayn1Context : DbContext
 
     public virtual DbSet<Login> Logins { get; set; }
 
-    public virtual DbSet<LoginSt> LoginSts { get; set; }
+    public virtual DbSet<Loginst> Loginsts { get; set; }
 
     public virtual DbSet<Nozap> Nozaps { get; set; }
 
@@ -53,11 +53,11 @@ public partial class Dayn1Context : DbContext
             entity.Property(e => e.Password).HasMaxLength(255);
         });
 
-        modelBuilder.Entity<LoginSt>(entity =>
+        modelBuilder.Entity<Loginst>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("login_st");
+            entity.ToTable("loginst");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()

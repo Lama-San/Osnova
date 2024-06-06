@@ -40,7 +40,7 @@ namespace Курсач_сайко_1125
 
         private void CheckAuth(string pass, string psw)
         {
-            var user = DB.Instance.LoginSts.FirstOrDefault(s => s.PassportNumber == pass && s.StudentPassword == psw);
+            var user = DB.Instance.Loginsts.FirstOrDefault(s => s.PassportNumber == pass && s.StudentPassword == psw);
             if (user != null)
             {
                 int passportNumber = int.Parse(user.PassportNumber);
