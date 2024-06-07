@@ -13,5 +13,5 @@ public partial class Login
 
     public string? Email { get; set; }
 
-    public string PassportNumber { get; set; } = null!;
+    public string? PassportNumber { get; set; }
 }

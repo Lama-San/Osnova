@@ -27,6 +27,7 @@ namespace CollegeAdmissionAutomation
             InitializeComponent();
             DataContext = this;
             PassportNumber = passportNumber.ToString();
+            StatusText = UpdateStatus();
 
             using (var context = new Dayn1Context())
             {
@@ -38,23 +39,9 @@ namespace CollegeAdmissionAutomation
                     StudentSpec = applicant.StudentSpec;
                     Status = applicant.Status;
                 }
-                else
-                {
-                    Name = "Unknown";
-                    StudentGpa = 0;
-                    StudentSpec = "Unknown";
-                    Status = "Неизвестно";
-                }
             }
 
-            // Подписываемся на событие StatusChanged из MainViewModel
-            if (Application.Current.MainWindow?.DataContext is MainViewModel mainViewModel)
-            {
-                mainViewModel.StatusChanged += () =>
-                {
-                    Dispatcher.Invoke(UpdateStatus);
-                };
-            }
+           
         }
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
@@ -107,16 +94,45 @@ namespace CollegeAdmissionAutomation
                 }
             }
         }
-
-        private void UpdateStatus()
+        private string statusText;
+        public string StatusText
+        {
+            get => statusText;
+            set
+            {
+                if (statusText != value)
+                {
+                    statusText = value;
+                    OnPropertyChanged(nameof(StatusText));
+                }
+            }
+        }
+        private string UpdateStatus()
         {
             using (var context = new Dayn1Context())
             {
-                var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == PassportNumber);
-                if (applicant != null)
+                var inYeszap = context.Yeszaps.Any(y => y.PassportNumber == PassportNumber);
+                var inNozap = context.Nozaps.Any(n => n.PassportNumber == PassportNumber);
+                var inZap = context.Zaps.Any(n => n.PassportNumber == PassportNumber);
+
+                if (inYeszap)
                 {
-                    Status = applicant.Status;
+                    Status = "Зачислен";
+                    return "Зачислен";
                 }
+                else if (inNozap)
+                {
+                    Status = "Не принят";
+                    return "Не принят";
+                }
+
+                else if (inZap)
+                {
+                    Status = "На рассмотрении"; 
+                    return "На рассмотрении";
+                }
+
+                return "Неизвестно"; 
             }
         }
 

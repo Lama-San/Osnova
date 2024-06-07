@@ -89,6 +89,7 @@ namespace CollegeAdmissionAutomation
             get => spec;
             set
             {
+                
                 if (spec != value)
                 {
                     spec = value;
@@ -96,6 +97,21 @@ namespace CollegeAdmissionAutomation
                 }
             }
         }
+        private string passportNumber;
+        public string PassportNumber
+        {
+            get => passportNumber;
+            set
+            {
+                if (passportNumber != value)
+                {
+                    passportNumber = value;
+                    OnPropertyChanged(nameof(PassportNumber));
+                }
+            }
+        }
+
+        
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public void Signal([CallerMemberName] string prop = null) =>
@@ -113,6 +129,7 @@ namespace CollegeAdmissionAutomation
         private string searchText = "";
         public event Action StatusChanged;
         public event PropertyChangedEventHandler PropertyChanged;
+
         public ICommand EnrollCommand { get; private set; } // Команда для зачисления
         public ICommand RemoveCommand { get; private set; } // Команда для удаления
         public ICommand NotTodayCommand { get; private set; } // Команда для переноса в Nozap
@@ -168,26 +185,12 @@ namespace CollegeAdmissionAutomation
         {
             if (SelectedApplicant != null && !string.IsNullOrEmpty(SelectedApplicant.Name))
             {
-                var loginstToUpdate = context.Loginsts.FirstOrDefault(l => l.StudentName == SelectedApplicant.Name);
-                if (loginstToUpdate != null)
-                {
-                    loginstToUpdate.Status = "Зачислен";
-                    try
-                    {
-                        await context.SaveChangesAsync();
-                        StatusChanged?.Invoke(); // Вызов события после успешного сохранения изменений
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}");
-                    }
-                }
-
                 var yeszap = new Yeszap
                 {
                     Name = SelectedApplicant.Name,
                     Gpa = SelectedApplicant.Gpa,
-                    Spec = SelectedApplicant.Spec
+                    Spec = SelectedApplicant.Spec,
+                    PassportNumber = SelectedApplicant.PassportNumber,
                 };
                 context.Yeszaps.Add(yeszap);
                 await context.SaveChangesAsync();
@@ -198,7 +201,7 @@ namespace CollegeAdmissionAutomation
                     context.Zaps.Remove(zapToRemove);
                     await context.SaveChangesAsync();
                 }
-                StatusChanged?.Invoke();
+
                 MessageBox.Show("Неужели у погасшей души будет шанс?");
                 SelectedApplicant = null;
                 await LoadZaps();
@@ -211,26 +214,12 @@ namespace CollegeAdmissionAutomation
         {
             if (SelectedApplicant != null && !string.IsNullOrEmpty(SelectedApplicant.Name))
             {
-                var loginstToUpdate = context.Loginsts.FirstOrDefault(l => l.StudentName == SelectedApplicant.Name);
-                if (loginstToUpdate != null)
-                {
-                    loginstToUpdate.Status = "Не принят";
-                    try
-                    {
-                        await context.SaveChangesAsync();
-                        StatusChanged?.Invoke(); // Вызов события после успешного сохранения изменений
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}");
-                    }
-                }
-
                 var nozap = new Nozap
                 {
                     Name = SelectedApplicant.Name,
                     Gpa = SelectedApplicant.Gpa,
-                    Spec = SelectedApplicant.Spec
+                    Spec = SelectedApplicant.Spec,
+                    PassportNumber = SelectedApplicant.PassportNumber,
                 };
                 context.Nozaps.Add(nozap);
                 await context.SaveChangesAsync();
@@ -249,7 +238,6 @@ namespace CollegeAdmissionAutomation
                     }
                 }
 
-                StatusChanged?.Invoke();
                 MessageBox.Show("За что вы так с ним, он хотел жить...");
                 SelectedApplicant = null;
                 await LoadZaps();
@@ -322,7 +310,8 @@ namespace CollegeAdmissionAutomation
                 Id = zap.Id,
                 Name = zap.Name,
                 Gpa = zap.Gpa,
-                Spec = zap.Spec
+                Spec = zap.Spec,
+                PassportNumber = zap.PassportNumber
             };
         }
         private void OnOpenLosers(object _)
