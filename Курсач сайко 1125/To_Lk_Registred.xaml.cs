@@ -47,8 +47,17 @@ namespace Курсач_сайко_1125
                 ErrorMessage = "Обязательные поля не заполнены";
                 return;
             }
-            else
+
+            using (var context = new Dayn1Context())
             {
+                // Проверяем, есть ли уже зарегистрированные паспортные данные
+                var existingStudent = context.Loginsts.FirstOrDefault(l => l.PassportNumber == textBoxPassport.Text);
+                if (existingStudent != null)
+                {
+                    ErrorMessage = "Данные паспорта уже зарегистрированы";
+                    return;
+                }
+
                 login = new Loginst
                 {
                     StudentName = txtStudentName.Text,
@@ -58,18 +67,15 @@ namespace Курсач_сайко_1125
                     Status = "Неизвестно"
                 };
 
-                using (var context = new Dayn1Context())
-                {
-                    Id = context.Loginsts.Any() ? context.Loginsts.Max(l => l.Id) + 1 : 1;
-                    login.Id = Id;
-                    context.Loginsts.Add(login);
-                    context.SaveChanges();
-                }
+                Id = context.Loginsts.Any() ? context.Loginsts.Max(l => l.Id) + 1 : 1;
+                login.Id = Id;
+                context.Loginsts.Add(login);
+                context.SaveChanges();
 
                 MessageBox.Show("Регистрация прошла успешно!");
                 this.Close();
             }
-        }
+        }2
 
         private void btnRegister(object sender, RoutedEventArgs e)
         {
