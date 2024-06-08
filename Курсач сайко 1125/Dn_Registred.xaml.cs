@@ -63,7 +63,7 @@ namespace Курсач_сайко_1125
                     connection.Open();
 
                     // Проверка, не полна ли группа
-                    string countQuery = "SELECT COUNT(*) FROM zap WHERE Spec = @spec";
+                    string countQuery = "SELECT COUNT(*) FROM yeszap WHERE Spec = @spec";
                     using (MySqlCommand countCommand = new MySqlCommand(countQuery, connection))
                     {
                         countCommand.Parameters.AddWithValue("@spec", spec);
@@ -72,6 +72,20 @@ namespace Курсач_сайко_1125
                         if (count >= MaxGroupSize)
                         {
                             MessageBox.Show("Извините, группа набрана");
+                            return;
+                        }
+                    }
+
+                    // Проверка, не подавал ли студент заявление ранее
+                    string statusQuery = "SELECT Status FROM loginst WHERE PassportNumber = @passportNumber";
+                    using (MySqlCommand statusCommand = new MySqlCommand(statusQuery, connection))
+                    {
+                        statusCommand.Parameters.AddWithValue("@passportNumber", PassportNumber);
+                        string status = (string)statusCommand.ExecuteScalar();
+
+                        if (status == "На рассмотрении" || status == "Зачислен" || status == "Не принят")
+                        {
+                            MessageBox.Show("Вы уже подали заявление. Повторная подача заявления невозможна.");
                             return;
                         }
                     }

@@ -29,6 +29,8 @@ namespace CollegeAdmissionAutomation
             PassportNumber = passportNumber.ToString();
             StatusText = UpdateStatus();
 
+            
+
             using (var context = new Dayn1Context())
             {
                 var applicant = context.Loginsts.FirstOrDefault(a => a.PassportNumber == passportNumber.ToString() && a.StudentName == name);
@@ -40,7 +42,6 @@ namespace CollegeAdmissionAutomation
                 }
             }
         }
-
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             var dn_Registred = new Dn_Registred(PassportNumber)

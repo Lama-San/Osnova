@@ -1,4 +1,5 @@
 ﻿using BD;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -48,13 +49,20 @@ namespace Курсач_сайко_1125
                 return;
             }
 
+            // Проверяем формат имени
+            if (string.IsNullOrWhiteSpace(txtStudentName.Text) || txtStudentName.Text.Contains("(") || txtStudentName.Text.Contains(")") || txtStudentName.Text.EndsWith(" "))
+            {
+                MessageBox.Show("Неверный формат имени. Имя не должно содержать пробелы, скобки или пробел в конце.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             using (var context = new Dayn1Context())
             {
                 // Проверяем, есть ли уже зарегистрированные паспортные данные
                 var existingStudent = context.Loginsts.FirstOrDefault(l => l.PassportNumber == textBoxPassport.Text);
                 if (existingStudent != null)
                 {
-                    ErrorMessage = "Данные паспорта уже зарегистрированы";
+                    MessageBox.Show("Такой паспорт уже зарегистрирован");
                     return;
                 }
 
@@ -75,7 +83,7 @@ namespace Курсач_сайко_1125
                 MessageBox.Show("Регистрация прошла успешно!");
                 this.Close();
             }
-        }2
+        }
 
         private void btnRegister(object sender, RoutedEventArgs e)
         {
