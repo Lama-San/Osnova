@@ -37,4 +37,8 @@
     <Resource Include="страдания.jpeg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="свчс\" />
+  </ItemGroup>
+
 </Project>

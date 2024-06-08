@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Windows.Input;
-using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;  
 using Курсач_сайко_1125;
 
 namespace CollegeAdmissionAutomation
@@ -36,18 +36,28 @@ namespace CollegeAdmissionAutomation
                 {
                     Name = applicant.StudentName;
                     StudentGpa = decimal.TryParse(applicant.StudentGpa, out decimal parsedGpa) ? parsedGpa : 0M;
-                    StudentSpec = applicant.StudentSpec;
                     Status = applicant.Status;
                 }
             }
-
-           
         }
+
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            var dn_Registred = new Dn_Registred(PassportNumber);
+            var dn_Registred = new Dn_Registred(PassportNumber)
+            {
+                Owner = this // Set the owner of the dialog to the current window
+            };
             dn_Registred.ShowDialog();
+
+            // Обновляем значения после диалога
+            StudentGpa = dn_Registred.Gpa;
+            StudentSpec = dn_Registred.Spec;
+
+            // Обновляем интерфейс
+            OnPropertyChanged(nameof(StudentGpa));
+            OnPropertyChanged(nameof(StudentSpec));
         }
+
         private string name;
         public string StudentName
         {
@@ -118,21 +128,24 @@ namespace CollegeAdmissionAutomation
                 if (inYeszap)
                 {
                     Status = "Зачислен";
+                    StudentSpec = context.Yeszaps.FirstOrDefault(y => y.PassportNumber == PassportNumber)?.Spec;
                     return "Зачислен";
                 }
                 else if (inNozap)
                 {
                     Status = "Не принят";
+                    StudentSpec = context.Nozaps.FirstOrDefault(n => n.PassportNumber == PassportNumber)?.Spec;
                     return "Не принят";
                 }
-
                 else if (inZap)
                 {
-                    Status = "На рассмотрении"; 
+                    Status = "На рассмотрении";
+                    StudentSpec = context.Zaps.FirstOrDefault(z => z.PassportNumber == PassportNumber)?.Spec;
                     return "На рассмотрении";
                 }
 
-                return "Неизвестно"; 
+                StudentSpec = context.Loginsts.FirstOrDefault(a => a.PassportNumber == PassportNumber)?.StudentSpec;
+                return "Неизвестно";
             }
         }
 

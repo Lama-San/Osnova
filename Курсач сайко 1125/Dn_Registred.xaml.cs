@@ -1,7 +1,5 @@
-﻿using MySqlConnector;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,17 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using MySqlConnector;
 
 namespace Курсач_сайко_1125
 {
     public partial class Dn_Registred : Window
     {
+        public decimal Gpa { get; set; } = 0;
+        public string Spec { get; set; } = "";
+
         private readonly string _connectionString = "server=localhost;user=root;password=student;database=dayn1";
         private readonly int MaxGroupSize = 25;
         private string PassportNumber;
-
-        public delegate void StatusChangedHandler();
-        public static event StatusChangedHandler? StatusChanged;
 
         public Dn_Registred(string passportNumber)
         {
@@ -34,7 +34,7 @@ namespace Курсач_сайко_1125
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtGpa.Text))
+            if (string.IsNullOrEmpty(txtName.Text))
             {
                 MessageBox.Show("Обязательные поля не заполнены!");
                 return;
@@ -52,6 +52,9 @@ namespace Курсач_сайко_1125
             {
                 spec = item.Content.ToString();
             }
+
+            Gpa = gpa;
+            Spec = spec;
 
             try
             {
@@ -91,17 +94,10 @@ namespace Курсач_сайко_1125
                         updateStatusCommand.Parameters.AddWithValue("@passportNumber", PassportNumber);
                         updateStatusCommand.ExecuteNonQuery();
                     }
-
-                    // Вызов события StatusChanged
-                    StatusChanged?.Invoke();
                 }
 
                 MessageBox.Show("Удачи... она тебе пригодится там...");
                 Close();
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show($"Ошибка регистрации: {ex.Message}");
             }
             catch (Exception ex)
             {
