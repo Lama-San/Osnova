@@ -202,7 +202,7 @@ namespace CollegeAdmissionAutomation
                     await context.SaveChangesAsync();
                 }
 
-                MessageBox.Show("Неужели у погасшей души будет шанс?");
+                MessageBox.Show("Студент зачислен!");
                 SelectedApplicant = null;
                 await LoadZaps();
                 await LoadYeszaps();
@@ -238,7 +238,7 @@ namespace CollegeAdmissionAutomation
                     }
                 }
 
-                MessageBox.Show("За что вы так с ним, он хотел жить...");
+                MessageBox.Show("Студент не зачислен!");
                 SelectedApplicant = null;
                 await LoadZaps();
             }

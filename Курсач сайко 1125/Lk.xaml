@@ -7,6 +7,9 @@
                 mc:Ignorable="d"
                 Title="Личный кабинет" Height="300" Width="400">
     <Grid Margin="10">
+        <Grid.Background>
+            <ImageBrush ImageSource="/1641472027_26-www-funnyart-club-p-krasivie-gradientnie-foni-26.jpg"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -20,13 +23,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Content="Имя:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+        <Label Content="Имя:" Grid.Row="0" Grid.Column="0" Margin="5" Background="White"/>
         <Label Content="{Binding Name}" Grid.Row="0" Grid.Column="1" Margin="5"/>
 
-        <Label Content="Специальность:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+        <Label Content="Специальность:" Grid.Row="2" Grid.Column="0" Margin="5" Background="White"/>
         <Label Content="{Binding StudentSpec}" Grid.Row="2" Grid.Column="1" Margin="5"/>
 
-        <Label Content="Статус заявления:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+        <Label Content="Статус заявления:" Grid.Row="3" Grid.Column="0" Margin="5" Background="White"/>
         <Label Content="{Binding StatusText}" Grid.Row="3" Grid.Column="1" Margin="5"/>
 
         <Button Content="Подать заявление" Grid.Row="5" Grid.ColumnSpan="2" Margin="5"
